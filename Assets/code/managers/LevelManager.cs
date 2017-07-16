@@ -111,7 +111,7 @@ public class LevelManager : MonoBehaviour {
 											Quaternion.identity,
 											temp.transform);
 				go.transform.localPosition = tile.transform.GetChild(i).position;
-				go.transform.localScale = tile.transform.GetChild(i).localScale;
+				go.transform.localRotation = tile.transform.GetChild(i).localRotation;
 			}else if(tile.transform.GetChild(i).CompareTag("tile_PACK")){
 				GameObject go = Instantiate(packList[Random.Range(0,packList.Count)],
 											tile.transform.GetChild(i).position,
