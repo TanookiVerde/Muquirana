@@ -23,7 +23,7 @@ public class LevelManager : MonoBehaviour {
 
 	[Header("Runtime")]
 	[SerializeField] private float levelSoFar;
-	[SerializeField] private float cameraVelocity;
+	[SerializeField] public float cameraVelocity;
 	[SerializeField] public List<GameObject> collectedItems;
 	[SerializeField] public int totalMoney;
 	[SerializeField] private bool bossDefeated;
@@ -119,9 +119,23 @@ public class LevelManager : MonoBehaviour {
 											temp.transform);
 				go.transform.localPosition = tile.transform.GetChild(i).position;
 				go.GetComponent<Block>().GetGem( GetRandomGem() );
-			}else if(tile.transform.GetChild(i).CompareTag("tile_PINTOR")){
+			}else if(tile.transform.GetChild(i).CompareTag("tile_PINTOR") && levelData.pintorDeVento){
 				Debug.Log("VIVA_O_PINTOR");
 				GameObject go = Instantiate(pintorDeVentoObstacle,
+											tile.transform.GetChild(i).position,
+											Quaternion.identity,
+											temp.transform);
+				go.transform.localPosition = tile.transform.GetChild(i).position;
+			}else if(tile.transform.GetChild(i).CompareTag("tile_PEGAPEGA") && levelData.pegaPega){
+				Debug.Log("VIVA_O_PEGAPEGA");
+				GameObject go = Instantiate(pegaPegaObstacle,
+											tile.transform.GetChild(i).position,
+											Quaternion.identity,
+											temp.transform);
+				go.transform.localPosition = tile.transform.GetChild(i).position;
+			}else if(tile.transform.GetChild(i).CompareTag("tile_BOLA") && levelData.bolaDePena){
+				Debug.Log("VIVA_O_BOLA");
+				GameObject go = Instantiate(bolaDePenaObstacle,
 											tile.transform.GetChild(i).position,
 											Quaternion.identity,
 											temp.transform);
