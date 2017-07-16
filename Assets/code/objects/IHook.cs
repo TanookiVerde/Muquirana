@@ -2,5 +2,4 @@
 
 	bool OnClick();
 	float MoveTo();
-	void Restart();
 }

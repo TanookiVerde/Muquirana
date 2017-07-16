@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -8,10 +9,12 @@ using UnityEditor;
 public class LevelManager : MonoBehaviour {
 	[Header("Level")]
 	[SerializeField] private SOLevel levelData;
+	[SerializeField] private int gemPerTen;
 
 	[Header("Spawnable Objects")]
 	[SerializeField] List<GameObject> packList;
 	[SerializeField] List<GameObject> tileList;
+	[SerializeField] List<GameObject> gemList;
 	[SerializeField] GameObject leafObstacle;
 	[SerializeField] GameObject spikeObstacle;
 	[SerializeField] GameObject pegaPegaObstacle;
@@ -21,8 +24,8 @@ public class LevelManager : MonoBehaviour {
 	[Header("Runtime")]
 	[SerializeField] private float levelSoFar;
 	[SerializeField] private float cameraVelocity;
-	[SerializeField] private List<GameObject> collectedItems;
-	[SerializeField] private int totalMoney;
+	[SerializeField] public List<GameObject> collectedItems;
+	[SerializeField] public int totalMoney;
 	[SerializeField] private bool bossDefeated;
 
 	private Camera cameraInScene;
@@ -31,12 +34,15 @@ public class LevelManager : MonoBehaviour {
 	private float distanceFromLastTile;
 	private float cameraSize;
 
+	private Text moneyText;
+
 	private void Start(){
 		GetPlayer();
 		GetCamera();
 		GetInitialPosition();
 		GetLevelInfo();
 		GetCameraSize();
+		GetMoneyText();
 
 		StartCoroutine( LevelStructure() );
 	}
@@ -107,13 +113,40 @@ public class LevelManager : MonoBehaviour {
 				go.transform.localPosition = tile.transform.GetChild(i).position;
 				go.transform.localScale = tile.transform.GetChild(i).localScale;
 			}else if(tile.transform.GetChild(i).CompareTag("tile_PACK")){
-				Instantiate(packList[Random.Range(0,packList.Count)],
-							tile.transform.GetChild(i).position,
-							Quaternion.identity,
-							temp.transform).transform.localPosition = tile.transform.GetChild(i).position;
+				GameObject go = Instantiate(packList[Random.Range(0,packList.Count)],
+											tile.transform.GetChild(i).position,
+											Quaternion.identity,
+											temp.transform);
+				go.transform.localPosition = tile.transform.GetChild(i).position;
+				go.GetComponent<Block>().GetGem( GetRandomGem() );
+			}else if(tile.transform.GetChild(i).CompareTag("tile_PINTOR")){
+				Debug.Log("VIVA_O_PINTOR");
+				GameObject go = Instantiate(pintorDeVentoObstacle,
+											tile.transform.GetChild(i).position,
+											Quaternion.identity,
+											temp.transform);
+				go.transform.localPosition = tile.transform.GetChild(i).position;
 			}
 		}
 
 	}
-	
+	private GameObject GetRandomGem(){
+		int randN = Random.Range(0,10);
+		if(randN > 10 - gemPerTen){
+			return gemList[ Random.Range(0,gemList.Count) ];
+		}
+		return null;
+	}
+	public IEnumerator UpdateMoneyText(){
+		int past = int.Parse(moneyText.text);
+
+		while(past-1 < totalMoney){
+			moneyText.text = past.ToString();
+			yield return new WaitForEndOfFrame();
+			past++;
+		}
+	}
+	private void GetMoneyText(){
+		moneyText = GameObject.Find("Money_Text").GetComponent<Text>();
+	}
 }

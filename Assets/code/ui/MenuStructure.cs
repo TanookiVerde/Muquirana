@@ -73,4 +73,7 @@ public class MenuStructure : MonoBehaviour {
 				break;
 		}
 	}
+	public void GoToNewScene(string name){
+		UnityEngine.SceneManagement.SceneManager.LoadScene(name);
+	}
 }

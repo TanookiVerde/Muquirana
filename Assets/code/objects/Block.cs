@@ -6,6 +6,8 @@ public class Block : MonoBehaviour,IHook {
 
 	[SerializeField] private uint resistance;
 	[SerializeField] private uint maxResistance;
+	[SerializeField] private GameObject myGem;
+	
 
 	private void OnMouseDown(){
 		if( OnClick() ){
@@ -15,6 +17,9 @@ public class Block : MonoBehaviour,IHook {
 	public bool OnClick(){
 		resistance--;
 		StartCoroutine( Damage() );
+		if(myGem != null){
+			StartCoroutine( myGem.GetComponent<IItem>().OnTouch() );
+		}
 		if(resistance <= 0){
 			StartCoroutine( Fall() );
 			return true;
@@ -28,6 +33,9 @@ public class Block : MonoBehaviour,IHook {
 		resistance = maxResistance;
 	}
 	private IEnumerator Fall(){
+		if(myGem != null){
+			StartCoroutine( myGem.GetComponent<IItem>().OnFall() );
+		}
 		foreach(BoxCollider2D bc2D in gameObject.GetComponents<BoxCollider2D>()){
 			bc2D.enabled = false;
 		}
@@ -51,6 +59,13 @@ public class Block : MonoBehaviour,IHook {
 	private IEnumerator Destroy(){
 		yield return new WaitForSeconds(3);
 		GameObject.Destroy(this.gameObject);
+	}
+	public void GetGem(GameObject gem){
+		if(gem != null)	{
+			Debug.Log("NEW_ITEM");
+			myGem = Instantiate(gem, Vector3.zero, Quaternion.identity,transform);
+			myGem.transform.localPosition = Vector3.zero;
+		}
 	}
 	
 }
