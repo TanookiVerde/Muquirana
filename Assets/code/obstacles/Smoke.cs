@@ -34,5 +34,6 @@ public class Smoke : MonoBehaviour {
 			yield return new WaitForEndOfFrame();
 		}
 		StopAllCoroutines();
+		Destroy(gameObject);
 	}
 }
