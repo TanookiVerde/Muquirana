@@ -5,11 +5,13 @@ using UnityEngine;
 public class Smoke : MonoBehaviour {
 
 	private SpriteRenderer mySR;
+	private BoxCollider2D myBC;
 	public float duration;
 	public float maxSize;
 
 	private void Start(){
 		mySR = GetComponent<SpriteRenderer>();
+		myBC = GetComponent<BoxCollider2D>();
 		StartCoroutine( ChangeScale() );
 		
 	}
@@ -17,6 +19,8 @@ public class Smoke : MonoBehaviour {
 		while(true){
 			if(transform.localScale.x < maxSize){
 				transform.localScale *= 1.1f;
+				myBC.size = mySR.bounds.size/4f;
+				
 			}else{
 				break;
 			}
