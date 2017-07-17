@@ -5,10 +5,15 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
+public enum PintorDirection {
+	HORIZONTAL, VERTICAL_UP, VERTICAL_DOWN, DIAGONAL_UP, DIAGONAL_DOWN, WAVE
+}
 public class Pintor : MonoBehaviour,IHook {
 
 	[Header("Movement Properties")]
 	[SerializeField] private float velocity;
+	[SerializeField] private PintorDirection direction;
+
 	private Vector3 targetPosition;
 
 	[Header("Smoke Properties")]
@@ -91,7 +96,7 @@ public class Pintor : MonoBehaviour,IHook {
 		float time = 0;
 		while(true){
 			time += Time.deltaTime;
-			transform.position += new Vector3(-velocity,Mathf.Sin(time)*2,0)*Time.deltaTime;
+			transform.position += GetMovement(time);
 			yield return new WaitForEndOfFrame();
 		}
 	}
@@ -100,5 +105,22 @@ public class Pintor : MonoBehaviour,IHook {
 			initialColor = new Color(Random.Range(0f,1f),Random.Range(0f,1f),Random.Range(0f,1f),1);
 			finalColor = new Color(Random.Range(0f,1f),Random.Range(0f,1f),Random.Range(0f,1f),1);
 		}
+	}
+	private Vector3 GetMovement(float time){
+		switch(direction){
+			case PintorDirection.VERTICAL_UP:
+				return new Vector3(0,velocity,0)*Time.deltaTime;
+			case PintorDirection.VERTICAL_DOWN:
+				return new Vector3(0,-velocity,0)*Time.deltaTime;
+			case PintorDirection.HORIZONTAL:
+				return new Vector3(-velocity,0,0)*Time.deltaTime;
+			case PintorDirection.DIAGONAL_DOWN:
+				return new Vector3(-1,-1,0).normalized*velocity*Time.deltaTime;
+			case PintorDirection.DIAGONAL_UP:
+				return new Vector3(-1,1,0).normalized*velocity*Time.deltaTime;
+			case PintorDirection.WAVE:
+				return new Vector3(-velocity,Mathf.Sin(time)*2,0)*Time.deltaTime;
+		}
+		return new Vector3(0,velocity,0)*Time.deltaTime;
 	}
 }
