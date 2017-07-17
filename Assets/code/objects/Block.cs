@@ -62,7 +62,6 @@ public class Block : MonoBehaviour,IHook {
 	}
 	public void GetGem(GameObject gem){
 		if(gem != null)	{
-			Debug.Log("NEW_ITEM");
 			myGem = Instantiate(gem, Vector3.zero, Quaternion.identity,transform);
 			myGem.transform.localPosition = Vector3.zero;
 		}

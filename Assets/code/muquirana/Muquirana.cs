@@ -22,6 +22,7 @@ public class Muquirana : MonoBehaviour {
 	[SerializeField] private int frameDuration;
 
 	private SpriteRenderer mySR;
+	private GameObject healthController;
 
 	private void Start(){
 		GetCameraInScene();

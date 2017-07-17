@@ -28,6 +28,9 @@ public class LevelManager : MonoBehaviour {
 	[SerializeField] public int totalMoney;
 	[SerializeField] private bool bossDefeated;
 
+	[Header("UI")]
+	[SerializeField] private GameObject textGameOver;
+
 	private Camera cameraInScene;
 	private Vector3 initialPosition;
 	private GameObject player;
@@ -43,6 +46,7 @@ public class LevelManager : MonoBehaviour {
 		GetLevelInfo();
 		GetCameraSize();
 		GetMoneyText();
+		DisableGameOverText();
 
 		StartCoroutine( LevelStructure() );
 	}
@@ -162,5 +166,14 @@ public class LevelManager : MonoBehaviour {
 	}
 	private void GetMoneyText(){
 		moneyText = GameObject.Find("Money_Text").GetComponent<Text>();
+	}
+	public IEnumerator GameOver(){
+		player.GetComponent<SpriteRenderer>().enabled = false;
+		textGameOver.SetActive(true);
+		yield return new WaitForSeconds(2);
+		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("_mainMenu");
+	}
+	private void DisableGameOverText(){
+		textGameOver.SetActive(false);
 	}
 }

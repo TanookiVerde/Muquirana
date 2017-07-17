@@ -44,8 +44,6 @@ public class Pintor : MonoBehaviour,IHook {
 		cameraInScene = GameObject.Find("Main Camera");
 		cameraHeight = cameraInScene.GetComponent<Camera>().orthographicSize*2;
 		cameraWidth = cameraInScene.GetComponent<Camera>().aspect*cameraHeight;
-
-		Debug.Log(cameraHeight+"/"+cameraWidth);
 	}
 	private void NewSmoke(){
 		GameObject go = Instantiate(smokePrefab,transform.position + Vector3.right*2,Quaternion.identity);

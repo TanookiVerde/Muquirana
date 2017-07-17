@@ -17,16 +17,24 @@ public class PlayerStatus : MonoBehaviour {
 	public void AddLife(){
 		if(grid.transform.childCount < maxHeartsNumber){
 			Instantiate(heartUI, Vector3.zero, Quaternion.identity, grid.transform);
+			hearts++;
 		}
 	}
 	public void LoseLife(){
 		if(grid.transform.childCount > 0){
 			GameObject.Destroy(grid.transform.GetChild(0).gameObject);
+			hearts--;
+			isDead();
 		}
 	}
 	private void InitHeartsNumber(){
 		for(int i = 0; i < initialHeartsNumber; i++){
 			AddLife();
+		}
+	}
+	private void isDead(){
+		if(hearts == 0){
+			StartCoroutine( GameObject.Find("Player").GetComponent<LevelManager>().GameOver() );
 		}
 	}
 }
