@@ -135,7 +135,7 @@ public class LevelManager : MonoBehaviour {
 		temp.transform.position = cameraInScene.transform.position + Vector3.right*cameraSize + Vector3.forward*10;
 		for(int i = 0; i < objectsInTile; i++){
 			if(tile.transform.GetChild(i).CompareTag("tile_OBSTACLE")){
-				GameObject go = Instantiate(leafObstacle,
+				GameObject go = Instantiate(spikeObstacle,
 											tile.transform.GetChild(i).position,
 											Quaternion.identity,
 											temp.transform);
@@ -149,7 +149,7 @@ public class LevelManager : MonoBehaviour {
 				go.transform.localPosition = tile.transform.GetChild(i).position;
 				go.GetComponent<Block>().GetGem( GetRandomGem() );
 			}else if(tile.transform.GetChild(i).CompareTag("tile_PINTOR") && levelData.pintorDeVento){
-				Debug.Log("VIVA_O_PINTOR");
+				//Debug.Log("VIVA_O_PINTOR");
 				GameObject go = Instantiate(pintorDeVentoObstacle,
 											tile.transform.GetChild(i).position,
 											Quaternion.identity,
