@@ -8,7 +8,11 @@ public class MenuStructure : MonoBehaviour {
 	[SerializeField] private List<GameObject> menuList;
 	private int actualMenu = 0;
 	[SerializeField] private float transitionSpeed;
+	[SerializeField] private Text levelText;
 
+	private void Start(){
+		UpdateLevelText();
+	}
 	private IEnumerator TransitionLeft(){
 		RectTransform menuRT = menuList[actualMenu].GetComponent<RectTransform>();
 		Vector2 originalPosition = menuRT.anchoredPosition;
@@ -75,5 +79,11 @@ public class MenuStructure : MonoBehaviour {
 	}
 	public void GoToNewScene(string name){
 		UnityEngine.SceneManagement.SceneManager.LoadScene(name);
+	}
+	private void UpdateLevelText(){
+		levelText.text = "LEVEL " + PlayerPrefs.GetInt("level",1);
+	}
+	public void ResetPlayerPrefsData(){
+		PlayerPrefs.DeleteAll();
 	}
 }

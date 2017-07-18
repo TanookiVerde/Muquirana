@@ -31,10 +31,12 @@ public class ExpScreen : MonoBehaviour {
 		colItems = GameObject.Find("Player").GetComponent<LevelManager>().collectedItems;
 	}
 	private GameObject ReadNextItem(){
-		if(indexInList + 1 == colItems.Count ){
+		if(indexInList + 1 <colItems.Count){
+			indexInList++;
+			return colItems[indexInList];
+		}else{
 			return null;
 		}
-		return colItems[++indexInList];
 	}
 	private int GetValue(GameObject item){
 		return item.GetComponent<Gem>().GetValue();
@@ -66,14 +68,14 @@ public class ExpScreen : MonoBehaviour {
 				level++;
 				exp = 0;
 			}
-			myExpSlider.value = (float)exp/500;
+			myExpSlider.value = (float)exp/expToLevel[level+1];
 			yield return new WaitForEndOfFrame();
 		}
-		PlayerPrefs.SetInt("level", level);
 	}
 	private IEnumerator BeginScreen(){
-		exp = PlayerPrefs.GetInt("exp");
-		level = PlayerPrefs.GetInt("level");
+		exp = PlayerPrefs.GetInt("exp",0);
+		level = PlayerPrefs.GetInt("level",1);
+		indexInList = 0;
 		while(true){
 			GameObject actualItem = ReadNextItem();
 			if(actualItem == null) break;
@@ -82,5 +84,6 @@ public class ExpScreen : MonoBehaviour {
 			yield return new WaitForSeconds(0.25f);
 		}
 		PlayerPrefs.SetInt("exp",exp);
+		PlayerPrefs.SetInt("level", level);
 	}
 }

@@ -30,6 +30,7 @@ public class LevelManager : MonoBehaviour {
 
 	[Header("UI")]
 	[SerializeField] private GameObject textGameOver;
+	[SerializeField] private GameObject expScreenPanel;
 	[SerializeField] private GameObject textInit;
 	[SerializeField] private Text velocityText;
 	[SerializeField] private Slider levelSlider;
@@ -41,6 +42,7 @@ public class LevelManager : MonoBehaviour {
 	private GameObject player;
 	private float distanceFromLastTile;
 	private float cameraSize;
+	private bool canStart;
 
 	
 
@@ -53,13 +55,14 @@ public class LevelManager : MonoBehaviour {
 		GetMoneyText();
 		DisableGameOverText();
 		ToggleInitText(true);
+		ToggleExpScreen(false);
 
 		StartCoroutine( LevelStructure() );
 	}
 	private IEnumerator LevelStructure(){
 		//PREPARATION
 		UpdateVelocityText();
-		while(!Input.GetMouseButtonDown(0)){
+		while(!canStart){
 			yield return new WaitForFixedUpdate();
 		}
 		ToggleInitText(false);
@@ -74,6 +77,7 @@ public class LevelManager : MonoBehaviour {
 			yield return new WaitForEndOfFrame();
 		}
 		Debug.Log("END_OF_MAIN");
+		ToggleExpScreen(true);
 		//BOSS
 		while(!bossDefeated){
 			yield return new WaitForEndOfFrame();
@@ -193,12 +197,21 @@ public class LevelManager : MonoBehaviour {
 		moneyText = GameObject.Find("Money_Text").GetComponent<Text>();
 	}
 	public IEnumerator GameOver(){
+		GameObject.Find("ItemCatcher").SetActive(false);
+		cameraVelocity = 0;
 		player.GetComponent<SpriteRenderer>().enabled = false;
 		textGameOver.SetActive(true);
-		yield return new WaitForSeconds(5);
-		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("_mainMenu");
+		yield return new WaitForSeconds(2);
+		textGameOver.SetActive(false);
+		ToggleExpScreen(true);
 	}
 	private void DisableGameOverText(){
 		textGameOver.SetActive(false);
+	}
+	private void ToggleExpScreen(bool b){
+		expScreenPanel.SetActive(b);
+	}
+	public void StartGame(){
+		canStart = true;
 	}
 }
