@@ -195,7 +195,7 @@ public class LevelManager : MonoBehaviour {
 	public IEnumerator GameOver(){
 		player.GetComponent<SpriteRenderer>().enabled = false;
 		textGameOver.SetActive(true);
-		yield return new WaitForSeconds(2);
+		yield return new WaitForSeconds(5);
 		UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("_mainMenu");
 	}
 	private void DisableGameOverText(){
