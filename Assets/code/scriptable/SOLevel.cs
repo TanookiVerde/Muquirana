@@ -14,7 +14,8 @@ public class SOLevel : ScriptableObject {
 	[SerializeField] public int levelSize;
 	[SerializeField] public float preparationTime;
 	[SerializeField] public float initialCameraVelocity, 
-		  				   		  finalCameraVelocity;
+		  				   		  finalCameraVelocity,
+								  requiredMoney;
 	[SerializeField] public TreasureType treasure;
 
 	[Header("Obstacles")]

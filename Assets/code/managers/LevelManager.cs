@@ -30,6 +30,11 @@ public class LevelManager : MonoBehaviour {
 
 	[Header("UI")]
 	[SerializeField] private GameObject textGameOver;
+	[SerializeField] private GameObject textInit;
+	[SerializeField] private Text velocityText;
+	[SerializeField] private Slider levelSlider;
+	[SerializeField] private Slider moneySlider;
+	private Text moneyText;
 
 	private Camera cameraInScene;
 	private Vector3 initialPosition;
@@ -37,7 +42,7 @@ public class LevelManager : MonoBehaviour {
 	private float distanceFromLastTile;
 	private float cameraSize;
 
-	private Text moneyText;
+	
 
 	private void Start(){
 		GetPlayer();
@@ -47,20 +52,25 @@ public class LevelManager : MonoBehaviour {
 		GetCameraSize();
 		GetMoneyText();
 		DisableGameOverText();
+		ToggleInitText(true);
 
 		StartCoroutine( LevelStructure() );
 	}
 	private IEnumerator LevelStructure(){
 		//PREPARATION
-		while(true){
-			yield return new WaitForSeconds(levelData.preparationTime);
-			break;
+		UpdateVelocityText();
+		while(!Input.GetMouseButtonDown(0)){
+			yield return new WaitForFixedUpdate();
 		}
+		ToggleInitText(false);
 		Debug.Log("END_OF_PREPARATION");
 		//MAIN
 		while(GetDistanceSoFar() < levelData.levelSize){
+			UpdateVelocityText();
+			UpdateSlider();
 			MoveCamera();
 			SpawnRandomTile();
+			IncreaseCameraVelocity();
 			yield return new WaitForEndOfFrame();
 		}
 		Debug.Log("END_OF_MAIN");
@@ -70,6 +80,21 @@ public class LevelManager : MonoBehaviour {
 		}
 		Debug.Log("END_OF_BOSS");
 		//EXP SCREEN
+	}
+	private void ToggleInitText(bool b){
+		textInit.SetActive(b);
+	}
+	private void UpdateVelocityText(){
+		velocityText.text = "VELOCIDADE: " + cameraVelocity;
+	}
+	private void UpdateSlider(){
+		levelSlider.value = levelSoFar/levelData.levelSize;
+		moneySlider.value = int.Parse(moneyText.text)/levelData.requiredMoney;
+	}
+	private void IncreaseCameraVelocity(){
+		if(cameraVelocity < levelData.finalCameraVelocity){
+			cameraVelocity += 0.001f;
+		}
 	}
 	private void MoveCamera(){
 		float offset = cameraVelocity*Time.deltaTime;
