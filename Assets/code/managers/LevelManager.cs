@@ -13,13 +13,19 @@ public class LevelManager : MonoBehaviour {
 
 	[Header("Spawnable Objects")]
 	[SerializeField] List<GameObject> packList;
-	[SerializeField] List<GameObject> tileList;
 	[SerializeField] List<GameObject> gemList;
 	[SerializeField] GameObject leafObstacle;
 	[SerializeField] GameObject spikeObstacle;
 	[SerializeField] GameObject pegaPegaObstacle;
 	[SerializeField] GameObject pintorDeVentoObstacle;
 	[SerializeField] GameObject bolaDePenaObstacle;
+
+	[Header("Tiles")]
+	[SerializeField] List<GameObject> tileList;
+	[SerializeField] List<GameObject> tileList_1;
+	[SerializeField] List<GameObject> tileList_2;
+	[SerializeField] List<GameObject> tileList_3;
+	[SerializeField] List<GameObject> tileList_4;
 
 	[Header("Runtime")]
 	[SerializeField] private float levelSoFar;
@@ -41,7 +47,7 @@ public class LevelManager : MonoBehaviour {
 	private Vector3 initialPosition;
 	private GameObject player;
 	private float distanceFromLastTile;
-	private float cameraSize;
+	[SerializeField] private float cameraSize;
 	private bool canStart;
 
 	
@@ -124,7 +130,8 @@ public class LevelManager : MonoBehaviour {
 		return packList[ Random.Range(0,packList.Count) ];
 	}
 	private void GetCameraSize(){
-		cameraSize = cameraInScene.aspect*cameraInScene.orthographicSize*2;
+		//cameraSize = cameraInScene.aspect*cameraInScene.orthographicSize*2;
+		cameraSize = 27.25436f;
 	}
 	private void SpawnRandomTile(){
 		if(distanceFromLastTile > cameraSize){

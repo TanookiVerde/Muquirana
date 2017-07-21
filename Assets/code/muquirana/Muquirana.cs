@@ -23,8 +23,10 @@ public class Muquirana : MonoBehaviour {
 
 	private SpriteRenderer mySR;
 	private GameObject healthController;
+	private AudioManager audioHandler;
 
 	private void Start(){
+		audioHandler = GameObject.Find("AudioHandler").GetComponent<AudioManager>();
 		GetCameraInScene();
 		CorrectPosition();
 		GetSpriteRender();
@@ -47,6 +49,8 @@ public class Muquirana : MonoBehaviour {
 		this.transform.position = new Vector3(-offset,y,0);
 	}
 	public IEnumerator Move(float newY){
+		audioHandler.PlaySound(Sounds.BLOCK_DESTROY);
+		GetComponentInChildren<BoxCollider2D>().enabled= false;
 		float a = transform.position.y,
 			  b = newY;
 		while(Mathf.Abs(a - b) > 0.05){
@@ -54,20 +58,24 @@ public class Muquirana : MonoBehaviour {
 			transform.position = new Vector3(transform.position.x, a, 0);
 			yield return new WaitForEndOfFrame();
 		}
+		GetComponentInChildren<BoxCollider2D>().enabled = true;
 	}
 	public void ChangePosition(float newY){
 		StartCoroutine( Move(newY) );
 	}
 	public IEnumerator DamageAnimation(){
 		mySR.color = inDamageColor;
+		GetComponentInChildren<BoxCollider2D>().enabled = false;
 		for(int i = 0; i < frameDuration; i++){
 			transform.Rotate(0,0,Time.deltaTime*rotationAngle);
 			yield return new WaitForEndOfFrame();
 		}
+		yield return new WaitForSeconds(0.5f);
 		for(int i = 0; i < frameDuration; i++){
 			transform.Rotate(0,0,-Time.deltaTime*rotationAngle);
 			yield return new WaitForEndOfFrame();
 		}
 		mySR.color = Color.white;
+		GetComponentInChildren<BoxCollider2D>().enabled = true;
 	}
 }
