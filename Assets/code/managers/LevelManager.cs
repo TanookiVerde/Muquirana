@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 public class LevelManager : MonoBehaviour {
+	#region VARIAVEIS
 	[Header("Level")]
 	[SerializeField] private SOLevel levelData;
 	[SerializeField] private int gemPerTen;
@@ -22,17 +20,12 @@ public class LevelManager : MonoBehaviour {
 
 	[Header("Tiles")]
 	[SerializeField] List<GameObject> tileList;
-	[SerializeField] List<GameObject> tileList_1;
-	[SerializeField] List<GameObject> tileList_2;
-	[SerializeField] List<GameObject> tileList_3;
-	[SerializeField] List<GameObject> tileList_4;
 
 	[Header("Runtime")]
 	[SerializeField] private float levelSoFar;
 	[SerializeField] public float cameraVelocity;
 	[SerializeField] public List<GameObject> collectedItems;
 	[SerializeField] public int totalMoney;
-	[SerializeField] private bool bossDefeated;
 
 	[Header("UI")]
 	[SerializeField] private GameObject textGameOver;
@@ -41,16 +34,21 @@ public class LevelManager : MonoBehaviour {
 	[SerializeField] private Text velocityText;
 	[SerializeField] private Slider levelSlider;
 	[SerializeField] private Slider moneySlider;
-	private Text moneyText;
+	[SerializeField] private Text moneyText;
 
+	[Header("Bosses")]
+	[SerializeField] private bool bossDefeated;
+	[SerializeField] private GameObject ticoPrefab;
+
+	//MISC.
 	private Camera cameraInScene;
 	private Vector3 initialPosition;
 	private GameObject player;
 	private float distanceFromLastTile;
-	[SerializeField] private float cameraSize;
+	private float cameraSize;
 	private bool canStart;
 
-	
+	#endregion
 
 	private void Start(){
 		GetPlayer();
@@ -83,13 +81,20 @@ public class LevelManager : MonoBehaviour {
 			yield return new WaitForEndOfFrame();
 		}
 		Debug.Log("END_OF_MAIN");
-		ToggleExpScreen(true);
+		int i = 1000;
+		while(i-- > 0){
+			MoveCamera();
+			UpdateVelocityText();
+			yield return new WaitForEndOfFrame();
+		}
+		Debug.Log("END_OF_BREATHING_TIME");
 		//BOSS
 		while(!bossDefeated){
 			yield return new WaitForEndOfFrame();
 		}
 		Debug.Log("END_OF_BOSS");
 		//EXP SCREEN
+		ToggleExpScreen(true);
 	}
 	private void ToggleInitText(bool b){
 		textInit.SetActive(b);
@@ -144,42 +149,17 @@ public class LevelManager : MonoBehaviour {
 		int objectsInTile = tile.transform.childCount;
 
 		temp.transform.position = cameraInScene.transform.position + Vector3.right*cameraSize + Vector3.forward*10;
+        Instantiate(tile, 
+                    cameraInScene.transform.position + Vector3.right * cameraSize + Vector3.forward * 10, 
+                    Quaternion.identity);
 		for(int i = 0; i < objectsInTile; i++){
-			if(tile.transform.GetChild(i).CompareTag("tile_OBSTACLE")){
-				GameObject go = Instantiate(spikeObstacle,
-											tile.transform.GetChild(i).position,
-											Quaternion.identity,
-											temp.transform);
-				go.transform.localPosition = tile.transform.GetChild(i).position;
-				go.transform.localRotation = tile.transform.GetChild(i).localRotation;
-			}else if(tile.transform.GetChild(i).CompareTag("tile_PACK")){
+			if(tile.transform.GetChild(i).CompareTag("tile_PACK")){
 				GameObject go = Instantiate(packList[Random.Range(0,packList.Count)],
 											tile.transform.GetChild(i).position,
 											Quaternion.identity,
 											temp.transform);
 				go.transform.localPosition = tile.transform.GetChild(i).position;
 				go.GetComponent<Block>().GetGem( GetRandomGem() );
-			}else if(tile.transform.GetChild(i).CompareTag("tile_PINTOR") && levelData.pintorDeVento){
-				//Debug.Log("VIVA_O_PINTOR");
-				GameObject go = Instantiate(pintorDeVentoObstacle,
-											tile.transform.GetChild(i).position,
-											Quaternion.identity,
-											temp.transform);
-				go.transform.localPosition = tile.transform.GetChild(i).position;
-			}else if(tile.transform.GetChild(i).CompareTag("tile_PEGAPEGA") && levelData.pegaPega){
-				Debug.Log("VIVA_O_PEGAPEGA");
-				GameObject go = Instantiate(pegaPegaObstacle,
-											tile.transform.GetChild(i).position,
-											Quaternion.identity,
-											temp.transform);
-				go.transform.localPosition = tile.transform.GetChild(i).position;
-			}else if(tile.transform.GetChild(i).CompareTag("tile_BOLA") && levelData.bolaDePena){
-				Debug.Log("VIVA_O_BOLA");
-				GameObject go = Instantiate(bolaDePenaObstacle,
-											tile.transform.GetChild(i).position,
-											Quaternion.identity,
-											temp.transform);
-				go.transform.localPosition = tile.transform.GetChild(i).position;
 			}
 		}
 
