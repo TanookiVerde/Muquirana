@@ -19,7 +19,22 @@ public class LevelManager : MonoBehaviour {
 	[SerializeField] GameObject bolaDePenaObstacle;
 
 	[Header("Tiles")]
-	[SerializeField] List<GameObject> tileList;
+	[SerializeField] List<GameObject> generalTileList;
+	[Space(10)]
+	[SerializeField] List<GameObject> TicoTileList;
+	[SerializeField] List<GameObject> bossTicoTileList;
+	[Space(10)]
+	[SerializeField] List<GameObject> BartolomeuTileList;
+	[SerializeField] List<GameObject> bossBartolomeuTileList;
+	[Space(10)]
+	[SerializeField] List<GameObject> AsdrubaTileList;
+	[SerializeField] List<GameObject> bossAsdrubaTileList;
+	[Space(10)]
+	[SerializeField] List<GameObject> FredericoTileList;
+	[SerializeField] List<GameObject> bossFredericoTileList;
+	[Space(10)]
+	[SerializeField] List<GameObject> ApolloTileList;
+	[SerializeField] List<GameObject> bossApolloTileList;
 
 	[Header("Runtime")]
 	[SerializeField] private float levelSoFar;
@@ -140,7 +155,7 @@ public class LevelManager : MonoBehaviour {
 	}
 	private void SpawnRandomTile(){
 		if(distanceFromLastTile > cameraSize){
-			CreateFromTile(tileList[Random.Range(0,tileList.Count)]);
+			CreateFromTile(generalTileList[Random.Range(0,generalTileList.Count)]);
 			distanceFromLastTile = 0;
 		}
 	}

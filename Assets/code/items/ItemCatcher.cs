@@ -18,7 +18,6 @@ public class ItemCatcher : MonoBehaviour {
 		StartCoroutine( item.CatchAnimation() );
 	}
 	private void NewGem(GameObject gem){
-		GameObject.Find("AudioHandler").GetComponent<AudioManager>().PlaySound(Sounds.GET_ITEM);
 		IItem item = gem.GetComponent<IItem>();
 		item.Destroy();
 		lManager.collectedItems.Add(gem.gameObject);

@@ -23,13 +23,24 @@ public class Muquirana : MonoBehaviour {
 
 	private SpriteRenderer mySR;
 	private GameObject healthController;
-	private AudioManager audioHandler;
+
+	public delegate void ChangePos(float f);
+	public event ChangePos changePosDelegate;
 
 	private void Start(){
-		audioHandler = GameObject.Find("AudioHandler").GetComponent<AudioManager>();
 		GetCameraInScene();
 		CorrectPosition();
 		GetSpriteRender();
+		changePosDelegate = ChangePosition;
+	}
+	private void Update(){
+		if(Input.GetKeyDown("t")){
+			changePosDelegate(5);
+		}
+		if(Input.GetKeyDown("y")){
+			changePosDelegate(-5);
+		}
+		
 	}
 	private void GetCameraInScene(){
 		cameraInScene = GameObject.Find("Main Camera").GetComponent<Camera>();
@@ -49,7 +60,6 @@ public class Muquirana : MonoBehaviour {
 		this.transform.position = new Vector3(-offset,y,0);
 	}
 	public IEnumerator Move(float newY){
-		audioHandler.PlaySound(Sounds.BLOCK_DESTROY);
 		GetComponentInChildren<BoxCollider2D>().enabled= false;
 		float a = transform.position.y,
 			  b = newY;
