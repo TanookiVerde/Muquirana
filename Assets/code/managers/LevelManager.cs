@@ -20,21 +20,6 @@ public class LevelManager : MonoBehaviour {
 
 	[Header("Tiles")]
 	[SerializeField] List<GameObject> generalTileList;
-	[Space(10)]
-	[SerializeField] List<GameObject> TicoTileList;
-	[SerializeField] List<GameObject> bossTicoTileList;
-	[Space(10)]
-	[SerializeField] List<GameObject> BartolomeuTileList;
-	[SerializeField] List<GameObject> bossBartolomeuTileList;
-	[Space(10)]
-	[SerializeField] List<GameObject> AsdrubaTileList;
-	[SerializeField] List<GameObject> bossAsdrubaTileList;
-	[Space(10)]
-	[SerializeField] List<GameObject> FredericoTileList;
-	[SerializeField] List<GameObject> bossFredericoTileList;
-	[Space(10)]
-	[SerializeField] List<GameObject> ApolloTileList;
-	[SerializeField] List<GameObject> bossApolloTileList;
 
 	[Header("Runtime")]
 	[SerializeField] private float levelSoFar;
@@ -104,6 +89,7 @@ public class LevelManager : MonoBehaviour {
 		}
 		Debug.Log("END_OF_BREATHING_TIME");
 		//BOSS
+		SpawnBoss();
 		while(!bossDefeated){
 			yield return new WaitForEndOfFrame();
 		}
@@ -150,12 +136,11 @@ public class LevelManager : MonoBehaviour {
 		return packList[ Random.Range(0,packList.Count) ];
 	}
 	private void GetCameraSize(){
-		//cameraSize = cameraInScene.aspect*cameraInScene.orthographicSize*2;
 		cameraSize = 27.25436f;
 	}
 	private void SpawnRandomTile(){
 		if(distanceFromLastTile > cameraSize){
-			CreateFromTile(generalTileList[Random.Range(0,generalTileList.Count)]);
+			CreateFromTile(levelData.levelTiles[Random.Range(0,generalTileList.Count)]);
 			distanceFromLastTile = 0;
 		}
 	}
@@ -215,5 +200,13 @@ public class LevelManager : MonoBehaviour {
 	}
 	public void StartGame(){
 		canStart = true;
+	}
+	private void SpawnBoss(){
+		Instantiate(levelData.bossPack,Vector3.zero,Quaternion.identity,cameraInScene.transform).transform.localPosition = Vector3.zero;
+	}
+	public IEnumerator FinishLevel(){
+		//Termina o level
+		//Eh chamada quando se mata chefao ou gameover
+		yield return new WaitForEndOfFrame();
 	}
 }

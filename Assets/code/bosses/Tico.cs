@@ -4,19 +4,20 @@ using UnityEngine;
 
 public class Tico : Boss {
 	[Header("Attack Preferences")]
-	[SerializeField] private GameObject seedPrefab;
+	[SerializeField] private GameObject seedPrefab,badSeedPrefab;
 	[SerializeField] private float shootIntensity;
 	[SerializeField] private GameObject upperLimit, lowerLimit;
 
 	[Header("Animations Preferences")]
 	[SerializeField] private float maxScale;
 	[SerializeField] private float growingTax;
+	[SerializeField] private GameObject safePoint;
 
 	public bool defeated;
 
 	private void Start(){
 		GetPlayer();
-		StartCoroutine( Loop() );
+		StartCoroutine( Appear() );
 		//GameObject.Find("Player").GetComponent<Muquirana>().changePosDelegate += MoveToPlayer;
 	}
 	private IEnumerator SingleShoot(){
@@ -54,7 +55,12 @@ public class Tico : Boss {
 			transform.localScale = Vector3.Lerp(transform.localScale,target,tax);
 			yield return new WaitForEndOfFrame();
 		}
-		Instantiate(seedPrefab,transform.position,Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(Vector2.left*shootIntensity);
+		if(Random.Range(0,10)>1){
+			Instantiate(seedPrefab,transform.position,Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(Vector2.left*shootIntensity);
+		}else{
+			Instantiate(badSeedPrefab,transform.position,Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(Vector2.left*shootIntensity);
+		}
+		
 		//DIMINUI TAMANHO (VOLTAND PARA O TAMANHO ORIGINAL)
 		target = new Vector3(transform.localScale.x,originalScale,transform.localScale.z);
 		while(!Mathf.Approximately(transform.localScale.y,target.y)){
@@ -102,5 +108,15 @@ public class Tico : Boss {
 	private IEnumerator WaitSecondsToMove(float time){
 		yield return new WaitForSeconds(time);
 		StartCoroutine( GoToPosition(GetPlayerHeight()) );
+	}
+	public IEnumerator Appear(){
+		transform.position = safePoint.transform.position;
+		while(transform.position.x != upperLimit.transform.position.x){
+			transform.position = new Vector3(Mathf.MoveTowards(transform.position.x,upperLimit.transform.position.x,10f*Time.deltaTime),transform.position.y,transform.position.z);
+			yield return new WaitForEndOfFrame();
+		}
+		yield return new WaitForSeconds(2);
+		//Texto dizendo "boss: ###"
+		yield return Loop();
 	}
 }

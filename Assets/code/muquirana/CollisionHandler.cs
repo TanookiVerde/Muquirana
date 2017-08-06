@@ -18,6 +18,10 @@ public class CollisionHandler : MonoBehaviour {
 		}else if(other.CompareTag("Tile")){
 			pStatus.LoseLife();
 			StartCoroutine( player.DamageAnimation() );
+		}else if (other.CompareTag("Seed")){
+			pStatus.LoseLife();
+			Destroy(other.gameObject);
+			StartCoroutine( player.DamageAnimation() );
 		}
 	}
 }

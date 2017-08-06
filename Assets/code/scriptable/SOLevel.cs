@@ -1,9 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 public enum TreasureType{
 	SAPPHIRE, OPAL, AMETHYST, PLATINUM, EMERALD
@@ -24,4 +21,13 @@ public class SOLevel : ScriptableObject {
 	[SerializeField] public bool leafBarrier;
 	[SerializeField] public bool spikedBarrier;
 	[SerializeField] public bool bolaDePena;
+
+	[Header("Tiles")]
+	[SerializeField] public List<GameObject> levelTiles;
+	[SerializeField] public List<GameObject> bossTiles;
+
+	[Header("Boss")]
+	[SerializeField] public GameObject bossPack;
+	[SerializeField] public bool generateTileWithBoss;
+	[SerializeField] public float bossHP;
 }
