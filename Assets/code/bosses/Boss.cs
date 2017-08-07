@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Boss : MonoBehaviour {
 
@@ -15,6 +16,9 @@ public class Boss : MonoBehaviour {
 
 	[Header("Animation Preferences")]
 	[SerializeField] private float damageMaxScale;
+	
+	[Header("UI Objects")]
+	[SerializeField] private Image hpBar;
 
 	private GameObject player;
 
@@ -50,7 +54,7 @@ public class Boss : MonoBehaviour {
 		if(tax > 1) tax = 1;
 		float temp = a + (b-a)*tax;
 		if(temp <= error){
-			temp = 0;
+			temp = 0;//usar os valores de a e b na func
 		}
 		return temp;
 	}
@@ -81,6 +85,9 @@ public class Boss : MonoBehaviour {
 	}
 	protected float GetPlayerHeight(){
 		return player.transform.position.y;
+	}
+	protected void UpdateHealthBar(){
+		hpBar.fillAmount = (float) actualHP/maxHP;
 	}
 }
 

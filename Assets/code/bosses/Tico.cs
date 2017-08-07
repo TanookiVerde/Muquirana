@@ -13,9 +13,13 @@ public class Tico : Boss {
 	[SerializeField] private float growingTax;
 	[SerializeField] private GameObject safePoint;
 
+	[Header("Appearing Animation")]
+	[SerializeField] private GameObject bossTitle;
+
 	public bool defeated;
 
 	private void Start(){
+		Instantiate(bossTitle);
 		GetPlayer();
 		StartCoroutine( Appear() );
 		//GameObject.Find("Player").GetComponent<Muquirana>().changePosDelegate += MoveToPlayer;
@@ -41,7 +45,7 @@ public class Tico : Boss {
 				}else if (rand > 0){
 					yield return ColumnShootUp();
 				}else{
-					yield return ColumnShootDown();
+					yield return ColumnShootDown();//nunca eh acessado
 				}
 			}
 		}
@@ -101,6 +105,7 @@ public class Tico : Boss {
 	}
 	private void LoseLifeOnSeed(){
 		actualHP -= 5;
+		UpdateHealthBar();
 	}
 	public void MoveToPlayer(float f){
 		StartCoroutine( WaitSecondsToMove(0.2f) );
@@ -111,12 +116,22 @@ public class Tico : Boss {
 	}
 	public IEnumerator Appear(){
 		transform.position = safePoint.transform.position;
+
+		yield return new WaitForSeconds(2);
+
 		while(transform.position.x != upperLimit.transform.position.x){
 			transform.position = new Vector3(Mathf.MoveTowards(transform.position.x,upperLimit.transform.position.x,10f*Time.deltaTime),transform.position.y,transform.position.z);
 			yield return new WaitForEndOfFrame();
 		}
+
 		yield return new WaitForSeconds(2);
 		//Texto dizendo "boss: ###"
 		yield return Loop();
+	}
+	private void OnTriggerEnter2D(Collider2D other){
+		Debug.Log(other.gameObject);
+		if(other.gameObject.GetComponent<Rigidbody2D>().velocity.x > 0){
+			LoseLifeOnSeed();
+		}
 	}
 }
