@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum BossType{
+	TICO, BARTOLOMEU, ASDRUBA, APOLLO, FREDERICO
+}
+
 public class Boss : MonoBehaviour {
 
 	[Header("Boss Preferences")]
@@ -30,6 +34,17 @@ public class Boss : MonoBehaviour {
 		}
 		isActing = false;
 	}
+
+	protected IEnumerator MoveToHeight(float position)
+	{
+		isActing = true;
+		while(!MyApproximately(transform.position.y,position)){
+			transform.position = new Vector3(transform.position.x, Mathf.MoveTowards(transform.position.y, position, 0.2f));
+			yield return new WaitForEndOfFrame();
+		}
+		isActing = false;
+	}
+
 	private void OnMouseDown(){
 		LoseLifeOnClick();
 		if(!isActing){
@@ -89,8 +104,4 @@ public class Boss : MonoBehaviour {
 	protected void UpdateHealthBar(){
 		hpBar.fillAmount = (float) actualHP/maxHP;
 	}
-}
-
-public enum BossType{
-	TICO, BARTOLOMEU, ASDRUBA, APOLLO, FREDERICO
 }
