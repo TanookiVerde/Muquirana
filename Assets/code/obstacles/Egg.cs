@@ -6,6 +6,7 @@ public class Egg : MonoBehaviour {
 
 	[SerializeField] private GameObject[] eggPrizes;
 	[SerializeField] private bool allowEmptyEgg = true;
+	[SerializeField] private float prizeGrowSpeed = 1f;
 
 	private GameObject prize;
 	private Animation animation;
@@ -60,12 +61,42 @@ public class Egg : MonoBehaviour {
 		{
 			GameObject obj = (GameObject) Instantiate (prize, transform.position, Quaternion.identity);
 			obj.transform.SetParent (transform.parent);
+			yield return ShowEggPrize (obj);
 		}
 		else if (bossEgg)  // Se for o ovo do boss, não spawna nada, só reativa o renderer dele
 		{
-			transform.parent.GetComponent<SpriteRenderer>().enabled = true;
+			transform.parent.GetComponent<Bartolomeu>().ActivateRenderer();
+			yield return ShowEggPrize (transform.parent.gameObject);
 		}
 
 		Destroy (this.gameObject);
+	}
+
+	private IEnumerator ShowEggPrize (GameObject prize)
+	{
+		Vector3 originalScale = prize.transform.localScale;
+		MonoBehaviour[] scripts = prize.GetComponents <MonoBehaviour> ();
+		foreach (MonoBehaviour script in scripts) 
+		{
+			script.enabled = false;
+		}
+
+		prize.transform.localScale = Vector3.one * 0.1f;
+		while ((originalScale-prize.transform.localScale).magnitude > 0.01f)
+		{
+			prize.transform.localScale = Vector3.Lerp (prize.transform.localScale, originalScale, prizeGrowSpeed);
+			yield return new WaitForEndOfFrame ();
+		}
+
+		foreach (MonoBehaviour script in scripts) 
+		{
+			script.enabled = true;
+		}
+	}
+
+	// HOOK
+	private void OnMouseDown()
+	{
+		GameObject.Find("Player").GetComponent<Muquirana>().ChangePosition (transform.position.y);
 	}
 }

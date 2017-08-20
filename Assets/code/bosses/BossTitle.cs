@@ -7,11 +7,14 @@ public class BossTitle : MonoBehaviour {
 
 	[SerializeField] private Image image;
 
-	void Start () {
+	void Start () 
+	{
 		image.fillAmount = 0;
 		StartCoroutine(Appear());
 	}
-	private IEnumerator Appear(){
+
+	private IEnumerator Appear()
+	{
 		while(!Mathf.Approximately(image.fillAmount,1)){
 			image.fillAmount = Mathf.Lerp(image.fillAmount,1,0.1f);
 			yield return new WaitForEndOfFrame();
@@ -23,4 +26,12 @@ public class BossTitle : MonoBehaviour {
 		}
 		Destroy(this.gameObject);
 	}
+
+	public void SetBossName (string name)
+	{
+		Text textComponent = GetComponentInChildren <Text> ();
+		textComponent.text = name;
+	}
+
+
 }

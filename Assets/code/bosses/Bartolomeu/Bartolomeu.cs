@@ -8,11 +8,22 @@ public class Bartolomeu : Boss {
 	[SerializeField] private float appearSpeed = 20;
 	[SerializeField] private float movementSpeed = 50;
 	[SerializeField] private float swapSpeed = 50;
-
-	[Header("Attack Preferences")]
-	[SerializeField] private GameObject eggPrefab, bombPrefab;
-	[SerializeField] private float bombIntensity, bombRange;
 	[SerializeField] private GameObject upperLimit, lowerLimit;
+
+	[Header("Egg Preferences")]
+	[SerializeField] private GameObject eggPrefab;
+
+	[Header("Tongue Attack Preferences")]
+	[SerializeField] private GameObject tongueObject;
+	[SerializeField] private float tongueSpeed = 10f;
+	[SerializeField] private float tongueMaxSize = 49f;
+	[SerializeField] private float tongueWaitTime = 2f;
+
+
+	[Header("Bomb Attack Preferences")]
+	[SerializeField] private GameObject bombPrefab;
+	[SerializeField] private float bombIntensity, bombRange;
+
 
 	[Header("Animations Preferences")]
 	[SerializeField] private float maxScale;
@@ -20,14 +31,20 @@ public class Bartolomeu : Boss {
 	[SerializeField] private GameObject safePoint;
 
 	[Header("Appearing Animation")]
-	[SerializeField] private GameObject bossTitle;
+	[SerializeField] private GameObject bossTitlePrefab;
 
+
+	private SpriteRenderer tongueRenderer;
 
 	public bool defeated;
 
 	private void Start()
 	{
-		//Instantiate(bossTitle);
+		GameObject bossTitle = (GameObject) Instantiate(bossTitlePrefab);
+		bossTitle.GetComponent<BossTitle> ().SetBossName ("Bartolomeu");
+
+		tongueRenderer = tongueObject.GetComponent<SpriteRenderer> ();
+
 		GetPlayer();
 		StartCoroutine( Appear() );
 		//GameObject.Find("Player").GetComponent<Muquirana>().changePosDelegate += MoveToPlayer;
@@ -35,7 +52,6 @@ public class Bartolomeu : Boss {
 
 	public IEnumerator Appear()
 	{
-		print ("Appear");
 		transform.position = safePoint.transform.position;
 
 		yield return new WaitForSeconds(2);
@@ -45,14 +61,13 @@ public class Bartolomeu : Boss {
 			yield return new WaitForEndOfFrame();
 		}
 
-		yield return new WaitForSeconds(2);
+		yield return new WaitForSeconds(1);
 		//Texto dizendo "boss: ###"
 		yield return Loop();
 	}
 
 	private IEnumerator Loop()
 	{
-		print ("Loop");
 		while(!defeated)
 		{
 			if(!isActing)
@@ -65,7 +80,6 @@ public class Bartolomeu : Boss {
 
 	private IEnumerator PlaceEggs ()
 	{
-		print ("Place eggs");
 		isActing = true;
 
 		int egg_amount = Random.Range(2,4); // Sorteia o número 2 ou 3 para definir quantos ovos ele vai botar
@@ -86,7 +100,10 @@ public class Bartolomeu : Boss {
 		GameObject bossEgg = (GameObject) Instantiate (eggPrefab, bossPosition, Quaternion.identity);
 		bossEgg.transform.SetParent (transform);
 		bossEgg.GetComponent<Egg>().SetBossEgg ();
-		transform.GetComponent<SpriteRenderer>().enabled = false;
+
+		// BOSS ENTRA NO OVO
+		yield return new WaitForSeconds(1);
+		DeactivateRenderer ();
 
 		yield return new WaitForSeconds(1);
 		yield return SwapEggs ();
@@ -94,12 +111,12 @@ public class Bartolomeu : Boss {
 
 	private IEnumerator SwapEggs ()
 	{
-		print ("Swap eggs");
-
 		List <Transform> eggs = new List <Transform> ();
 		for (int i = 0; i < transform.parent.childCount; i++)
 		{
-			eggs.Add (transform.parent.GetChild (i));
+			Transform obj = transform.parent.GetChild (i);
+			if (obj.CompareTag ("Egg") || obj.CompareTag ("Boss"))
+				eggs.Add (transform.parent.GetChild (i));
 		}
 
 		// DEBUG //
@@ -126,8 +143,6 @@ public class Bartolomeu : Boss {
 
 	private IEnumerator HatchEggs (List <Transform> eggs)
 	{
-		print ("Hatch eggs");
-
 		for (int i = 0; i < eggs.Count; i++)
 		{
 			if (eggs[i].CompareTag ("Egg"))
@@ -143,7 +158,35 @@ public class Bartolomeu : Boss {
 
 		// BOSS ATTACK
 
-		yield return new WaitForEndOfFrame();
+		yield return TongueAttack ();
+	}
+
+	private IEnumerator TongueAttack ()
+	{
+		float error = 0.01f;
+
+		// Wait for the boss to hatch from the egg
+		yield return new WaitForSeconds (tongueWaitTime);
+
+		float initialWidth = tongueRenderer.size.x;
+		Vector2 targetSize = new Vector2 (tongueMaxSize, tongueRenderer.size.y);
+		while (tongueRenderer.size.x < tongueMaxSize - error) 
+		{
+			tongueRenderer.size = Vector2.Lerp (tongueRenderer.size, targetSize, tongueSpeed * Time.deltaTime);
+			yield return new WaitForEndOfFrame ();
+		}
+
+		//yield return new WaitForSeconds (0.1f);
+
+		targetSize = new Vector2 (initialWidth, tongueRenderer.size.y);
+		while (tongueRenderer.size.x > initialWidth + error) 
+		{
+			tongueRenderer.size = Vector2.Lerp (tongueRenderer.size, targetSize, 1.5f*tongueSpeed * Time.deltaTime);
+			yield return new WaitForEndOfFrame ();
+		}
+
+		yield return new WaitForSeconds (0.5f);
+		isActing = false;
 	}
 
 	private IEnumerator MoveToPosition (Transform objTransform, Vector3 newPosition, float error = 0.01f)
@@ -165,6 +208,18 @@ public class Bartolomeu : Boss {
 			transform_b.position = Vector3.MoveTowards (transform_b.position, initialPos_a, swapSpeed*Time.deltaTime);
 			yield return new WaitForEndOfFrame();
 		}
+	}
+
+	public void DeactivateRenderer()
+	{
+		GetComponent<SpriteRenderer> ().enabled = false;
+		tongueRenderer.enabled = false;
+	}
+
+	public void ActivateRenderer()
+	{
+		GetComponent<SpriteRenderer> ().enabled = true;
+		tongueRenderer.enabled = true;
 	}
 
 /*	private IEnumerator ShootLaser (ScreenPosition screenPos, bool triggerCooldown = true)

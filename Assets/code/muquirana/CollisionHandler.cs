@@ -12,13 +12,13 @@ public class CollisionHandler : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter2D(Collider2D other){
-		if(other.CompareTag("Obstacle")){
+		if(other.CompareTag("Obstacle") || other.CompareTag("Tile") || other.CompareTag("Tongue"))
+		{
 			pStatus.LoseLife();
 			StartCoroutine( player.DamageAnimation() );
-		}else if(other.CompareTag("Tile")){
-			pStatus.LoseLife();
-			StartCoroutine( player.DamageAnimation() );
-		}else if (other.CompareTag("Seed")){
+		}
+		else if (other.CompareTag("Seed"))
+		{
 			pStatus.LoseLife();
 			Destroy(other.gameObject);
 			StartCoroutine( player.DamageAnimation() );

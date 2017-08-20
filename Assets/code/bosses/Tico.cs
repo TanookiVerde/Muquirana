@@ -14,16 +14,18 @@ public class Tico : Boss {
 	[SerializeField] private GameObject safePoint;
 
 	[Header("Appearing Animation")]
-	[SerializeField] private GameObject bossTitle;
+	[SerializeField] private GameObject bossTitlePrefab;
 
 	public bool defeated;
 
 	private void Start(){
-		Instantiate(bossTitle);
+		GameObject bossTitle = (GameObject) Instantiate(bossTitlePrefab);
+		bossTitle.GetComponent<BossTitle> ().SetBossName ("Tico");
 		GetPlayer();
 		StartCoroutine( Appear() );
 		//GameObject.Find("Player").GetComponent<Muquirana>().changePosDelegate += MoveToPlayer;
 	}
+
 	private IEnumerator SingleShoot(){
 		isActing = true;
 
