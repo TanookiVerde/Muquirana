@@ -24,7 +24,12 @@ public class Boss : MonoBehaviour {
 	[Header("UI Objects")]
 	[SerializeField] private Image hpBar;
 
-	private GameObject player;
+	private GameObject playerRef;
+
+	void Start()
+	{
+		playerRef = GetPlayer ();
+	}
 
 	protected IEnumerator GoToPosition(float position){
 		isActing = true;
@@ -95,11 +100,12 @@ public class Boss : MonoBehaviour {
 											 1<<LayerMask.NameToLayer("Player"));
 		return hit.collider != null;
 	}
-	protected void GetPlayer(){
-		player = GameObject.Find("Player");
+	protected GameObject GetPlayer()
+	{
+		return GameObject.Find("Player");
 	}
 	protected float GetPlayerHeight(){
-		return player.transform.position.y;
+		return playerRef.transform.position.y;
 	}
 	protected void UpdateHealthBar(){
 		hpBar.fillAmount = (float) actualHP/maxHP;

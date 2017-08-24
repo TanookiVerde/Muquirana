@@ -22,7 +22,6 @@ public class Bartolomeu : Boss {
 
 	[Header("Bomb Attack Preferences")]
 	[SerializeField] private GameObject bombPrefab;
-	[SerializeField] private float bombIntensity, bombRange;
 
 
 	[Header("Animations Preferences")]
@@ -33,8 +32,12 @@ public class Bartolomeu : Boss {
 	[Header("Appearing Animation")]
 	[SerializeField] private GameObject bossTitlePrefab;
 
+	private SpriteRenderer bossRenderer;
 
 	private SpriteRenderer tongueRenderer;
+	private BoxCollider2D tongueCollider;
+
+	private GameObject player;
 
 	public bool defeated;
 
@@ -43,11 +46,14 @@ public class Bartolomeu : Boss {
 		GameObject bossTitle = (GameObject) Instantiate(bossTitlePrefab);
 		bossTitle.GetComponent<BossTitle> ().SetBossName ("Bartolomeu");
 
-		tongueRenderer = tongueObject.GetComponent<SpriteRenderer> ();
+		bossRenderer = GetComponent<SpriteRenderer> ();
 
-		GetPlayer();
+		tongueRenderer = tongueObject.GetComponent<SpriteRenderer> ();
+		tongueCollider = tongueObject.GetComponent<BoxCollider2D> ();
+		tongueCollider.enabled = false;
+
+		player = GetPlayer();
 		StartCoroutine( Appear() );
-		//GameObject.Find("Player").GetComponent<Muquirana>().changePosDelegate += MoveToPlayer;
 	}
 
 	public IEnumerator Appear()
@@ -118,12 +124,12 @@ public class Bartolomeu : Boss {
 			if (obj.CompareTag ("Egg") || obj.CompareTag ("Boss"))
 				eggs.Add (transform.parent.GetChild (i));
 		}
+			
+		// o número de trocas é igual à 5 - quantidade_de_quartos_de_vida_que_o_boss_tem
+		int swapAmount = 5 - actualHP/(maxHP/4);
+		print (swapAmount);
 
-		// DEBUG //
-		int swapMaxAmount = 5;
-		///////////
-
-		for (int i = 0; i < swapMaxAmount; i++)
+		for (int i = 0; i < swapAmount; i++)
 		{
 
 			int firstEgg = Random.Range (0, eggs.Count);
@@ -158,12 +164,15 @@ public class Bartolomeu : Boss {
 
 		// BOSS ATTACK
 
-		yield return TongueAttack ();
+		//yield return TongueAttack ();
+		yield return BombAttack ();
 	}
 
 	private IEnumerator TongueAttack ()
 	{
 		float error = 0.01f;
+
+		tongueCollider.enabled = true;
 
 		// Wait for the boss to hatch from the egg
 		yield return new WaitForSeconds (tongueWaitTime);
@@ -184,6 +193,27 @@ public class Bartolomeu : Boss {
 			tongueRenderer.size = Vector2.Lerp (tongueRenderer.size, targetSize, 1.5f*tongueSpeed * Time.deltaTime);
 			yield return new WaitForEndOfFrame ();
 		}
+
+		yield return new WaitForSeconds (0.5f);
+		isActing = false;
+		tongueCollider.enabled = false;
+	}
+
+	private IEnumerator BombAttack ()
+	{
+		// Wait for the boss to hatch from the egg
+		yield return new WaitForSeconds (tongueWaitTime);
+
+		Vector3 startPosition = transform.position;
+		Vector3 targetPosition = new Vector3 (player.transform.position.x, transform.position.y, transform.position.z);
+		print ("Start to move to:");
+		yield return MoveToPosition (transform, targetPosition);
+
+		Instantiate (bombPrefab, transform.position, Quaternion.identity);
+
+		bossRenderer.flipX = true;
+		yield return MoveToPosition (transform, startPosition);
+		bossRenderer.flipX = false;
 
 		yield return new WaitForSeconds (0.5f);
 		isActing = false;
