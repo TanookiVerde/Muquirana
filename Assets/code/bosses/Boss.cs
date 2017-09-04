@@ -105,6 +105,9 @@ public class Boss : MonoBehaviour {
 		return GameObject.Find("Player");
 	}
 	protected float GetPlayerHeight(){
+		if(playerRef == null){
+			playerRef = GameObject.Find("Player");
+		}
 		return playerRef.transform.position.y;
 	}
 	protected void UpdateHealthBar(){
