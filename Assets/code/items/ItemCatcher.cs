@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ItemCatcher : MonoBehaviour {
 	LevelManager lManager;
+	[SerializeField] private SO_PlayerData playerData;
 
 	private void Start(){
 		lManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
@@ -21,6 +22,7 @@ public class ItemCatcher : MonoBehaviour {
 		IItem item = gem.GetComponent<IItem>();
 		item.Destroy();
 		lManager.collectedItems.Add(gem.gameObject);
+		playerData.collectedItems[gem.GetComponent<Gem>().gemData.itemType.GetHashCode()] = true;
 		lManager.totalMoney += item.GetValue();
 		StartCoroutine ( lManager.UpdateMoneyText() );
 	}

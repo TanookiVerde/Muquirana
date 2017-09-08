@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Gem : MonoBehaviour, IItem {
-	[SerializeField] private SOGem gemData;
+	public SOGem gemData;
 
 	public void Effect(){
 		return;
