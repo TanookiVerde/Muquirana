@@ -6,7 +6,7 @@ public class ItemCatcher : MonoBehaviour {
 	LevelManager lManager;
 
 	private void Start(){
-		lManager = GameObject.Find("Player").GetComponent<LevelManager>();
+		lManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
 	}
 	private void OnTriggerEnter2D(Collider2D other){
 		if(other.CompareTag("Gem")){

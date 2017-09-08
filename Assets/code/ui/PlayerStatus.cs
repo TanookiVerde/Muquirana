@@ -33,7 +33,7 @@ public class PlayerStatus : MonoBehaviour {
 	private IEnumerator isDead(){
 		yield return new WaitForEndOfFrame();
 		if(grid.transform.childCount == 0){
-			StartCoroutine( GameObject.Find("Player").GetComponent<LevelManager>().GameOver() );
+			StartCoroutine( GameObject.Find("LevelManager").GetComponent<LevelManager>().GameOver() );
 		}
 	}
 }

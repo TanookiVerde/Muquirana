@@ -29,8 +29,7 @@ public class MenuController : MonoBehaviour {
 		_currentIndex = -1;
 	}
 	private void OpenScreen(){
-		StartCoroutine( Transite() );
-		_allScreens[_currentIndex].SetActive(true);
+		StartCoroutine( OpenScreenAnimation() );
 	}
 	public void TransiteButton(){
 		StartCoroutine( Transite() );
@@ -54,7 +53,15 @@ public class MenuController : MonoBehaviour {
 		_transition.raycastTarget = _transition_activated;
 	}
 	public void NewScene(string name){
+		StartCoroutine( NewSceneAnimation(name) );
+	}
+	private IEnumerator NewSceneAnimation(string name){
+		yield return new WaitForEndOfFrame();
 		SceneManager.LoadScene(name);
+	}
+	private IEnumerator OpenScreenAnimation(){
+		yield return Transite();
+		_allScreens[_currentIndex].SetActive(true);
 	}
 
 }
