@@ -28,7 +28,7 @@ public class ExpScreen : MonoBehaviour {
 		StartCoroutine(BeginScreen());
 	}
 	private void GetCollectedItems(){
-		colItems = GameObject.Find("Player").GetComponent<LevelManager>().collectedItems;
+		colItems = GameObject.Find("LevelManager").GetComponent<LevelManager>().collectedItems;
 	}
 	private GameObject ReadNextItem(){
 		if(indexInList + 1 <colItems.Count){

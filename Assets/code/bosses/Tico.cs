@@ -120,9 +120,11 @@ public class Tico : Boss {
 		transform.position = safePoint.transform.position;
 
 		yield return new WaitForSeconds(2);
-
+		print("Chegando!!!");
 		while(transform.position.x != upperLimit.transform.position.x){
-			transform.position = new Vector3(Mathf.MoveTowards(transform.position.x,upperLimit.transform.position.x,10f*Time.deltaTime),transform.position.y,transform.position.z);
+			transform.position = new Vector3(Mathf.MoveTowards(transform.position.x,upperLimit.transform.position.x,10f*Time.deltaTime),
+											 transform.position.y,
+											 transform.position.z);
 			yield return new WaitForEndOfFrame();
 		}
 

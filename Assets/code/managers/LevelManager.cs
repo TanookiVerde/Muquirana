@@ -66,11 +66,7 @@ public class LevelManager : MonoBehaviour {
 	private IEnumerator LevelStructure(){
 		//PREPARATION
 		UpdateVelocityText();
-		while(!canStart){
-			yield return new WaitForFixedUpdate();
-		}
 		ToggleInitText(false);
-		Debug.Log("END_OF_PREPARATION");
 		//MAIN
 		while(GetDistanceSoFar() < levelData.levelSize){
 			UpdateVelocityText();
@@ -104,7 +100,7 @@ public class LevelManager : MonoBehaviour {
 		velocityText.text = "VELOCIDADE: " + cameraVelocity;
 	}
 	private void UpdateSlider(){
-		levelSlider.value = levelSoFar/levelData.levelSize;
+		levelSlider.value = levelSoFar/( levelData.levelSize );
 		moneySlider.value = int.Parse(moneyText.text)/levelData.requiredMoney;
 	}
 	private void IncreaseCameraVelocity(){
