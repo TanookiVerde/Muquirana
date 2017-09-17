@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Heart : Hook {
+public class Heart : MonoBehaviour {
 
 	[SerializeField] private float lifeTime = 2f;
 
@@ -14,13 +14,13 @@ public class Heart : Hook {
 
 	void Start()
 	{
-		StartCoroutine (AutoDestroy (lifeTime));
+		//StartCoroutine (AutoDestroy (lifeTime));
 	}
 
 	private void OnMouseDown()
 	{
 		GameObject.Find("Player").GetComponent<PlayerStatus>().AddLife ();
-		GameObject.Find("Player").GetComponent<Muquirana>().ChangePosition( MoveTo() );
+		GameObject.Find("Player").GetComponent<Muquirana>().ChangePosition (transform.position.y);
 		Destroy (this.gameObject);
 	}
 }

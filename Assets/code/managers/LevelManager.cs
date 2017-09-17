@@ -77,8 +77,10 @@ public class LevelManager : MonoBehaviour {
 			yield return new WaitForEndOfFrame();
 		}
 		Debug.Log("END_OF_MAIN");
-		int i = 1000;
-		while(i-- > 0){
+		float timer = 0;
+		while(timer < levelData.preparationTime)
+		{
+			timer += Time.deltaTime;
 			MoveCamera();
 			UpdateVelocityText();
 			yield return new WaitForEndOfFrame();

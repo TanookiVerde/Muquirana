@@ -38,6 +38,7 @@ public class CutsceneHandler : MonoBehaviour {
 		// Enable the first cutscene and fade out
 		cutsceneList [0].SetActive (true);
 		fadeScript.StartCoroutine (fadeScript.FadeOut (fadeTime));
+		return null;
 
 	}
 

@@ -90,7 +90,9 @@ public class Bartolomeu : Boss {
 
 		int egg_amount = Random.Range(2,4); // Sorteia o número 2 ou 3 para definir quantos ovos ele vai botar
 		float offset = (upperLimit.transform.position.y - lowerLimit.transform.position.y) / (float) egg_amount;
-		
+	
+		DestroyOldEggs ();
+
 		int i = 0;
 		for (; i < egg_amount; i++)
 		{
@@ -106,6 +108,7 @@ public class Bartolomeu : Boss {
 		GameObject bossEgg = (GameObject) Instantiate (eggPrefab, bossPosition, Quaternion.identity);
 		bossEgg.transform.SetParent (transform);
 		bossEgg.GetComponent<Egg>().SetBossEgg ();
+
 
 		// BOSS ENTRA NO OVO
 		yield return new WaitForSeconds(1);
@@ -127,7 +130,6 @@ public class Bartolomeu : Boss {
 			
 		// o número de trocas é igual à 5 - quantidade_de_quartos_de_vida_que_o_boss_tem
 		int swapAmount = 5 - actualHP/(maxHP/4);
-		print (swapAmount);
 
 		for (int i = 0; i < swapAmount; i++)
 		{
@@ -163,9 +165,10 @@ public class Bartolomeu : Boss {
 		}
 
 		// BOSS ATTACK
-
-		//yield return TongueAttack ();
-		yield return BombAttack ();
+		if (Random.Range (0,2) == 0)
+			yield return TongueAttack ();
+		else
+			yield return BombAttack ();
 	}
 
 	private IEnumerator TongueAttack ()
@@ -194,7 +197,7 @@ public class Bartolomeu : Boss {
 			yield return new WaitForEndOfFrame ();
 		}
 
-		yield return new WaitForSeconds (0.5f);
+		yield return new WaitForSeconds (2f);
 		isActing = false;
 		tongueCollider.enabled = false;
 	}
@@ -206,7 +209,6 @@ public class Bartolomeu : Boss {
 
 		Vector3 startPosition = transform.position;
 		Vector3 targetPosition = new Vector3 (player.transform.position.x, transform.position.y, transform.position.z);
-		print ("Start to move to:");
 		yield return MoveToPosition (transform, targetPosition);
 
 		Instantiate (bombPrefab, transform.position, Quaternion.identity);
@@ -215,7 +217,7 @@ public class Bartolomeu : Boss {
 		yield return MoveToPosition (transform, startPosition);
 		bossRenderer.flipX = false;
 
-		yield return new WaitForSeconds (0.5f);
+		yield return new WaitForSeconds (2f);
 		isActing = false;
 	}
 
@@ -250,6 +252,18 @@ public class Bartolomeu : Boss {
 	{
 		GetComponent<SpriteRenderer> ().enabled = true;
 		tongueRenderer.enabled = true;
+	}
+
+	private void DestroyOldEggs ()
+	{
+		Transform parent = transform.parent;
+		for (int i = 0; i < parent.childCount; i++) 
+		{
+			if (parent.GetChild (i).CompareTag ("Egg")) 
+			{
+				Destroy (parent.GetChild (i).gameObject);
+			}
+		}
 	}
 
 /*	private IEnumerator ShootLaser (ScreenPosition screenPos, bool triggerCooldown = true)

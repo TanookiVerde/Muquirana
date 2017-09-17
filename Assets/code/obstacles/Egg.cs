@@ -16,6 +16,17 @@ public class Egg : MonoBehaviour {
 	static private int emptyEggCounter = 0;
 	static private int eggAmount;
 
+
+	// Quando spawnar um ovo novo, destroi um coração antigo, se tiver
+	void OnTriggerEnter2D(Collider2D other) 
+	{
+		if (other.gameObject.CompareTag ("Heart")) 
+		{
+			StopCoroutine ("ShowEggPrize");
+			Destroy (other.gameObject);
+		}
+	}
+
 	public void SetEggAmount (int amount)
 	{
 		eggAmount = amount;
@@ -39,6 +50,7 @@ public class Egg : MonoBehaviour {
 		}
 		else
 			prize = eggPrizes [i];
+
 	}
 
 
@@ -68,29 +80,32 @@ public class Egg : MonoBehaviour {
 			transform.parent.GetComponent<Bartolomeu>().ActivateRenderer();
 			yield return ShowEggPrize (transform.parent.gameObject);
 		}
-
+			
 		Destroy (this.gameObject);
 	}
 
 	private IEnumerator ShowEggPrize (GameObject prize)
 	{
-		Vector3 originalScale = prize.transform.localScale;
-		MonoBehaviour[] scripts = prize.GetComponents <MonoBehaviour> ();
-		foreach (MonoBehaviour script in scripts) 
+		if (prize != null) 
 		{
-			script.enabled = false;
-		}
+			Vector3 originalScale = prize.transform.localScale;
+			MonoBehaviour[] scripts = prize.GetComponents <MonoBehaviour> ();
+			foreach (MonoBehaviour script in scripts) 
+			{
+				script.enabled = false;
+			}
 
-		prize.transform.localScale = Vector3.one * 0.1f;
-		while ((originalScale-prize.transform.localScale).magnitude > 0.01f)
-		{
-			prize.transform.localScale = Vector3.Lerp (prize.transform.localScale, originalScale, prizeGrowSpeed);
-			yield return new WaitForEndOfFrame ();
-		}
+			prize.transform.localScale = Vector3.one * 0.1f;
+			while ((originalScale - prize.transform.localScale).magnitude > 0.01f) 
+			{
+				prize.transform.localScale = Vector3.Lerp (prize.transform.localScale, originalScale, prizeGrowSpeed);
+				yield return new WaitForEndOfFrame ();
+			}
 
-		foreach (MonoBehaviour script in scripts) 
-		{
-			script.enabled = true;
+			foreach (MonoBehaviour script in scripts) 
+			{
+				script.enabled = true;
+			}
 		}
 	}
 
