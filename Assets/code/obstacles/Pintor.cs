@@ -11,7 +11,8 @@ public enum PintorDirection {
 public class Pintor : MonoBehaviour,IHook {
 
 	[Header("Movement Properties")]
-	[SerializeField] private float velocity;
+	[SerializeField] private float velocityDefault;
+	[SerializeField] private float velocityFromEgg;
 	[SerializeField] private PintorDirection direction;
 
 	private Vector3 targetPosition;
@@ -27,6 +28,9 @@ public class Pintor : MonoBehaviour,IHook {
 	[Header("Resistance")]
 	[SerializeField] private int resistance;
 
+	private float velocity;
+	private bool spawnedFromEgg = false;
+
 	private GameObject cameraInScene;
 	private float cameraHeight;
 	private float cameraWidth;
@@ -34,12 +38,23 @@ public class Pintor : MonoBehaviour,IHook {
 	private bool acted;
 
 	private void Start(){
+		if (!spawnedFromEgg)
+			velocity = velocityDefault;
+		else
+			velocity = velocityFromEgg;
+		
 		IfRandomColor();
 		actualColor = initialColor;
 		GetCamera();
 		StartCoroutine( Fly() );
 		StartCoroutine( SmokeHandler() );
 	}
+
+	public void SpawnedFromEgg()
+	{
+		spawnedFromEgg = true;
+	}
+
 	private void GetCamera(){
 		cameraInScene = GameObject.Find("Main Camera");
 		cameraHeight = cameraInScene.GetComponent<Camera>().orthographicSize*2;

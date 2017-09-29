@@ -73,6 +73,12 @@ public class Egg : MonoBehaviour {
 		{
 			GameObject obj = (GameObject) Instantiate (prize, transform.position, Quaternion.identity);
 			obj.transform.SetParent (transform.parent);
+
+			// Se for um Pintor de Vento...
+			Pintor pintorScript = obj.GetComponent<Pintor> ();
+			if (pintorScript)
+				pintorScript.SpawnedFromEgg ();
+			
 			yield return ShowEggPrize (obj);
 		}
 		else if (bossEgg)  // Se for o ovo do boss, não spawna nada, só reativa o renderer dele
