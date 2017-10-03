@@ -31,6 +31,12 @@ public class Boss : MonoBehaviour {
 		playerRef = GetPlayer ();
 	}
 
+	void Update ()
+	{
+		if (actualHP <= 0)
+			print ("Boss defeated");
+	}
+
 	protected IEnumerator GoToPosition(float position){
 		isActing = true;
 		while(!MyApproximately(transform.position.y,position)){
@@ -56,7 +62,7 @@ public class Boss : MonoBehaviour {
 			//StartCoroutine( Damage() );
 		}
 	}
-	private IEnumerator Damage(){
+	public IEnumerator Damage(){
 		isActing = true;
 		Vector3 originalScale = transform.localScale;
 		Vector3 target = new Vector3(damageMaxScale,damageMaxScale,damageMaxScale);

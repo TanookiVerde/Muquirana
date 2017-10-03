@@ -12,16 +12,22 @@ public class CollisionHandler : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter2D(Collider2D other){
-		if(other.CompareTag("Obstacle") || other.CompareTag("Tile") || other.CompareTag("Tongue"))
+		if (other.CompareTag ("Obstacle") || other.CompareTag ("Tile")) 
 		{
-			pStatus.LoseLife();
-			StartCoroutine( player.DamageAnimation() );
-		}
-		else if (other.CompareTag("Seed"))
+			pStatus.LoseLife ();
+			StartCoroutine (player.DamageAnimation ());
+		} 
+		else if (other.CompareTag ("Seed")) 
 		{
-			pStatus.LoseLife();
-			Destroy(other.gameObject);
-			StartCoroutine( player.DamageAnimation() );
+			pStatus.LoseLife ();
+			Destroy (other.gameObject);
+			StartCoroutine (player.DamageAnimation ());
+		} 
+		else if (other.CompareTag ("Tongue")) 
+		{
+			pStatus.LoseLife ();
+			other.GetComponentInParent<Bartolomeu> ().tongueHit = true;
+			StartCoroutine (player.DamageAnimation ());
 		}
 	}
 }

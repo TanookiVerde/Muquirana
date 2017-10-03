@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Egg : MonoBehaviour {
 
-	[SerializeField] private GameObject[] eggPrizes;
+	[SerializeField] private List<GameObject> eggPrizes;
 	[SerializeField] private bool allowEmptyEgg = true;
 	[SerializeField] private float prizeGrowSpeed = 1f;
 
@@ -16,6 +16,8 @@ public class Egg : MonoBehaviour {
 	static private int emptyEggCounter = 0;
 	static private int eggAmount;
 
+	private	GameObject heartObject;
+	private bool canSpawnHeart = true;
 
 	// Quando spawnar um ovo novo, destroi um coração antigo, se tiver
 	void OnTriggerEnter2D(Collider2D other) 
@@ -32,27 +34,43 @@ public class Egg : MonoBehaviour {
 		eggAmount = amount;
 	}
 
+	public void SetCanSpawnHeart (bool newValue)
+	{
+		canSpawnHeart = newValue;
+		ChoosePrice ();
+	}
+
 	// Use this for initialization
 	void Start () 
 	{
 		animation = GetComponent<Animation> ();
 
-		int i = 0;
-		if (allowEmptyEgg && emptyEggCounter < eggAmount-1) // Sempre garante uma chance do player se mover
-			i = Random.Range (0, eggPrizes.Length+1);
-		else
-			i = Random.Range (0, eggPrizes.Length);
+	}
 
-		if (i == eggPrizes.Length) // Ovo vazio
+	private void ChoosePrice()
+	{
+		int i = 0;
+		if (allowEmptyEgg && emptyEggCounter < eggAmount - 1) // Sempre garante uma chance do player se mover
+		{
+			i = Random.Range (0, eggPrizes.Count + 1);
+		}
+		else
+			i = Random.Range (0, eggPrizes.Count);
+
+		// Se tiver escolhido um coração e não puder spawnar coração, o ovo fica vazio
+		if (i != eggPrizes.Count && eggPrizes [i].CompareTag ("Heart") && !canSpawnHeart) 
+		{
+			i = eggPrizes.Count;
+		}
+
+		if (i == eggPrizes.Count) // Ovo vazio
 		{
 			emptyEgg = true;
 			emptyEggCounter++;
 		}
 		else
 			prize = eggPrizes [i];
-
 	}
-
 
 	public void SetBossEgg ()
 	{
