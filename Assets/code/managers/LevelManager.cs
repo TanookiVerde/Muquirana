@@ -138,7 +138,7 @@ public class LevelManager : MonoBehaviour {
 	}
 	private void SpawnRandomTile(){
 		if(distanceFromLastTile > cameraSize){
-			CreateFromTile(levelData.levelTiles[Random.Range(0,generalTileList.Count)]);
+			CreateFromTile(generalTileList[Random.Range(0,generalTileList.Count)]);
 			distanceFromLastTile = 0;
 		}
 	}
