@@ -19,6 +19,7 @@ public class Tico : Boss {
 	public bool defeated;
 
 	private void Start(){
+		GameObject.Find("LevelManager").GetComponent<LevelManager>().bossDefeated = false;
 		GameObject bossTitle = (GameObject) Instantiate(bossTitlePrefab);
 		bossTitle.GetComponent<BossTitle> ().SetBossName ("Tico");
 		GetPlayer();
@@ -36,6 +37,7 @@ public class Tico : Boss {
 	}
 	private IEnumerator Loop(){
 		while(!defeated){
+			CanDie();
 			if(!PlayerInFront() && !isActing){
 				yield return GoToPosition( GetPlayerHeight() );
 			}else if(!isActing){
@@ -62,9 +64,9 @@ public class Tico : Boss {
 			yield return new WaitForEndOfFrame();
 		}
 		if(Random.Range(0,10)>1 || !badSeed){
-			Instantiate(seedPrefab,transform.position,Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(Vector2.left*shootIntensity);
+			Instantiate(seedPrefab,transform.position,Quaternion.identity);
 		}else{
-			Instantiate(badSeedPrefab,transform.position,Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(Vector2.left*shootIntensity);
+			Instantiate(badSeedPrefab,transform.position,Quaternion.identity);
 		}
 		
 		//DIMINUI TAMANHO (VOLTAND PARA O TAMANHO ORIGINAL)
@@ -134,6 +136,21 @@ public class Tico : Boss {
 		Debug.Log(other.gameObject);
 		if(other.gameObject.GetComponent<Rigidbody2D>().velocity.x > 0){
 			LoseLifeOnSeed();
+			other.GetComponent<Seed>().EndLife();
 		}
+	}
+	private void CanDie(){
+		if(actualHP <= 0){
+			StopAllCoroutines();
+			StartCoroutine( Die() );
+		}
+	}
+	private IEnumerator Die(){
+		gameObject.AddComponent(typeof(Rigidbody2D));
+		GetComponent<Rigidbody2D>().AddForce(Vector2.down*50f);
+		transform.up *= -1;
+		yield return new WaitForSeconds(1f);
+		GameObject.Find("LevelManager").GetComponent<LevelManager>().bossDefeated = true;
+		Destroy(this.transform.parent.gameObject);
 	}
 }

@@ -35,7 +35,7 @@ public class LevelManager : MonoBehaviour {
 	[SerializeField] private Image transitor;
 
 	[Header("Bosses")]
-	[SerializeField] private bool bossDefeated;
+	public bool bossDefeated;
 	[SerializeField] private List<GameObject> bossPrefab;
 
 	//MISC.
@@ -70,7 +70,8 @@ public class LevelManager : MonoBehaviour {
 		yield return Transite(0);
 		//ESTRUTURA P/ FASE INFINITA
 		while(true){
-			while(totalMoney <= moneyRequirementStep){
+			bossDefeated =  false;
+			while(totalMoney < moneyRequirementStep){
 				MoveCamera();
 				UpdateSlider();
 				SpawnRandomTile();
@@ -94,6 +95,7 @@ public class LevelManager : MonoBehaviour {
 		while(!bossDefeated){
 			yield return new WaitForEndOfFrame();
 		}
+		print("FIM DO BOSS");
 	}
 	private void UpdateSlider(){
 		moneySlider.value = int.Parse(moneyText.text)/(float)moneyRequirementStep;

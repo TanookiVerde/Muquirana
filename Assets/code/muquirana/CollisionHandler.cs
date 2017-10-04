@@ -21,6 +21,7 @@ public class CollisionHandler : MonoBehaviour {
 		{
 			pStatus.LoseLife ();
 			Destroy (other.gameObject);
+			other.GetComponent<Seed>().EndLife();
 			StartCoroutine (player.DamageAnimation ());
 		} 
 		else if (other.CompareTag ("Tongue")) 

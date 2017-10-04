@@ -30,13 +30,6 @@ public class Boss : MonoBehaviour {
 	{
 		playerRef = GetPlayer ();
 	}
-
-	void Update ()
-	{
-		if (actualHP <= 0)
-			print ("Boss defeated");
-	}
-
 	protected IEnumerator GoToPosition(float position){
 		isActing = true;
 		while(!MyApproximately(transform.position.y,position)){
