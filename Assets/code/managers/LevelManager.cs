@@ -4,19 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour {
-	#region VARIAVEIS
+
 	[Header("Level")]
-	[SerializeField] private SOLevel levelData;
 	[SerializeField] private int gemPerTen;
+	[Range(10,20)]
+	[SerializeField] private float cameraMaxVelocity;
+	[SerializeField] private int moneyRequirementStep = 1000;
 
 	[Header("Spawnable Objects")]
 	[SerializeField] List<GameObject> packList;
 	[SerializeField] List<GameObject> gemList;
-	[SerializeField] GameObject leafObstacle;
 	[SerializeField] GameObject spikeObstacle;
-	[SerializeField] GameObject pegaPegaObstacle;
 	[SerializeField] GameObject pintorDeVentoObstacle;
-	[SerializeField] GameObject bolaDePenaObstacle;
 
 	[Header("Tiles")]
 	[SerializeField] List<GameObject> generalTileList;
@@ -30,15 +29,13 @@ public class LevelManager : MonoBehaviour {
 	[Header("UI")]
 	[SerializeField] private GameObject textGameOver;
 	[SerializeField] private GameObject expScreenPanel;
-	[SerializeField] private GameObject textInit;
-	[SerializeField] private Text velocityText;
-	[SerializeField] private Slider levelSlider;
 	[SerializeField] private Slider moneySlider;
 	[SerializeField] private Text moneyText;
+	[SerializeField] private Image transitor;
 
 	[Header("Bosses")]
 	[SerializeField] private bool bossDefeated;
-	[SerializeField] private GameObject ticoPrefab;
+	[SerializeField] private List<GameObject> bossPrefab;
 
 	//MISC.
 	private Camera cameraInScene;
@@ -47,68 +44,66 @@ public class LevelManager : MonoBehaviour {
 	private float distanceFromLastTile;
 	private float cameraSize;
 	private bool canStart;
-
-	#endregion
+	private bool canIncreseCameraVelocity;
 
 	private void Start(){
+		//GETTERS
 		GetPlayer();
 		GetCamera();
 		GetInitialPosition();
 		GetLevelInfo();
 		GetCameraSize();
 		GetMoneyText();
-		DisableGameOverText();
-		ToggleInitText(true);
-		ToggleExpScreen(false);
 
+		//SETTERS
+		canIncreseCameraVelocity = false;
+
+		//DESABILITA COISAS DESNECESSARIAS NO MOMENTO
+		DisableGameOverText();
+		ToggleExpScreen(false);
+		
+		//COMEÇA LOOP DO LEVEL
 		StartCoroutine( LevelStructure() );
 	}
 	private IEnumerator LevelStructure(){
-		//PREPARATION
-		UpdateVelocityText();
-		ToggleInitText(false);
-		//MAIN
-		while(GetDistanceSoFar() < levelData.levelSize){
-			UpdateVelocityText();
-			UpdateSlider();
-			MoveCamera();
-			SpawnRandomTile();
-			IncreaseCameraVelocity();
+		yield return Transite(0);
+		//ESTRUTURA P/ FASE INFINITA
+		while(true){
+			while(totalMoney <= moneyRequirementStep){
+				MoveCamera();
+				UpdateSlider();
+				SpawnRandomTile();
+				IncreaseCameraVelocity();
+				yield return new WaitForEndOfFrame();
+			}
+			yield return BossBattle();
+			IncreaseMoneyRequirementStep();
+		}
+	}
+	private IEnumerator Transite(int target){
+		var current = Mathf.Abs(target - 1);
+		transitor.fillAmount = current;
+		while(transitor.fillAmount != target){
+			transitor.fillAmount = Mathf.MoveTowards(transitor.fillAmount,target,0.05f);
 			yield return new WaitForEndOfFrame();
 		}
-		Debug.Log("END_OF_MAIN");
-		float timer = 0;
-		while(timer < levelData.preparationTime)
-		{
-			timer += Time.deltaTime;
-			MoveCamera();
-			UpdateVelocityText();
-			yield return new WaitForEndOfFrame();
-		}
-		Debug.Log("END_OF_BREATHING_TIME");
-		//BOSS
+	}
+	private IEnumerator BossBattle(){
 		SpawnBoss();
 		while(!bossDefeated){
 			yield return new WaitForEndOfFrame();
 		}
-		Debug.Log("END_OF_BOSS");
-		//EXP SCREEN
-		ToggleExpScreen(true);
-	}
-	private void ToggleInitText(bool b){
-		textInit.SetActive(b);
-	}
-	private void UpdateVelocityText(){
-		velocityText.text = "VELOCIDADE: " + cameraVelocity;
 	}
 	private void UpdateSlider(){
-		levelSlider.value = levelSoFar/( levelData.levelSize );
-		moneySlider.value = int.Parse(moneyText.text)/levelData.requiredMoney;
+		moneySlider.value = int.Parse(moneyText.text)/(float)moneyRequirementStep;
 	}
 	private void IncreaseCameraVelocity(){
-		if(cameraVelocity < levelData.finalCameraVelocity){
+		if(canIncreseCameraVelocity && cameraVelocity < cameraMaxVelocity){
 			cameraVelocity += 0.001f;
 		}
+	}
+	private void IncreaseMoneyRequirementStep(){
+		moneyRequirementStep = (int) (moneyRequirementStep*2.5f);
 	}
 	private void MoveCamera(){
 		float offset = cameraVelocity*Time.deltaTime;
@@ -119,7 +114,7 @@ public class LevelManager : MonoBehaviour {
 		return levelSoFar = cameraInScene.transform.position.x - initialPosition.x;
 	}
 	private void GetLevelInfo(){
-		cameraVelocity = levelData.initialCameraVelocity;
+		cameraVelocity = 8f;
 	}
 	private void GetCamera(){
 		cameraInScene = GameObject.Find("Main Camera").GetComponent<Camera>();
@@ -184,6 +179,7 @@ public class LevelManager : MonoBehaviour {
 	public IEnumerator GameOver(){
 		GameObject.Find("ItemCatcher").SetActive(false);
 		cameraVelocity = 0;
+		canIncreseCameraVelocity = false;
 		player.GetComponent<SpriteRenderer>().enabled = false;
 		textGameOver.SetActive(true);
 		yield return new WaitForSeconds(2);
@@ -200,11 +196,19 @@ public class LevelManager : MonoBehaviour {
 		canStart = true;
 	}
 	private void SpawnBoss(){
-		Instantiate(levelData.bossPack,Vector3.zero,Quaternion.identity,cameraInScene.transform).transform.localPosition = Vector3.zero;
+		int random_number = Random.Range(0,bossPrefab.Count);
+		print(random_number);
+		Instantiate( bossPrefab[random_number],
+					 Vector3.zero,
+					 Quaternion.identity,
+					 cameraInScene.transform).transform.localPosition = Vector3.zero;
 	}
 	public IEnumerator FinishLevel(){
 		//Termina o level
 		//Eh chamada quando se mata chefao ou gameover
 		yield return new WaitForEndOfFrame();
+	}
+	private void DestroyAllTiles(){
+		//read the function name
 	}
 }

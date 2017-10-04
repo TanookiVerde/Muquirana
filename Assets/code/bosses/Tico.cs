@@ -52,7 +52,7 @@ public class Tico : Boss {
 			}
 		}
 	}
-	private IEnumerator Shoot(float tax = 0.2f){
+	private IEnumerator Shoot(float tax = 0.2f,bool badSeed = false){
 
 		float originalScale = transform.localScale.x;
 		//AUMENTA TAMANHO
@@ -61,7 +61,7 @@ public class Tico : Boss {
 			transform.localScale = Vector3.Lerp(transform.localScale,target,tax);
 			yield return new WaitForEndOfFrame();
 		}
-		if(Random.Range(0,10)>1){
+		if(Random.Range(0,10)>1 || !badSeed){
 			Instantiate(seedPrefab,transform.position,Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(Vector2.left*shootIntensity);
 		}else{
 			Instantiate(badSeedPrefab,transform.position,Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(Vector2.left*shootIntensity);
@@ -78,7 +78,7 @@ public class Tico : Boss {
 		isActing = true;
 
 		for(int i = 0; i < 3;i++){
-			yield return Shoot(0.4f);
+			yield return Shoot(0.4f,true);
 		}
 		yield return new WaitForSeconds(actionCoolDown);
 		isActing = false;
@@ -89,7 +89,7 @@ public class Tico : Boss {
 		yield return GoToPosition( upperLimit.transform.position.y );
 
 		for(int i=1; i<6; i++){
-			yield return Shoot(0.4f);
+			yield return Shoot(0.4f,true);
 			yield return GoToPosition( upperLimit.transform.position.y - (offset/5)*i );
 		}
 		isActing = false;
@@ -100,7 +100,7 @@ public class Tico : Boss {
 		yield return GoToPosition( lowerLimit.transform.position.y );
 
 		for(int i=1; i<6; i++){
-			yield return Shoot(0.4f);
+			yield return Shoot(0.4f,true);
 			yield return GoToPosition( lowerLimit.transform.position.y + (offset/5)*i );
 		}
 		isActing = false;
@@ -120,7 +120,6 @@ public class Tico : Boss {
 		transform.position = safePoint.transform.position;
 
 		yield return new WaitForSeconds(2);
-		print("Chegando!!!");
 		while(transform.position.x != upperLimit.transform.position.x){
 			transform.position = new Vector3(Mathf.MoveTowards(transform.position.x,upperLimit.transform.position.x,10f*Time.deltaTime),
 											 transform.position.y,
@@ -129,7 +128,6 @@ public class Tico : Boss {
 		}
 
 		yield return new WaitForSeconds(2);
-		//Texto dizendo "boss: ###"
 		yield return Loop();
 	}
 	private void OnTriggerEnter2D(Collider2D other){
