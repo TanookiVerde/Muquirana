@@ -6,22 +6,29 @@ using UnityEngine.UI;
 public class BossTitle : MonoBehaviour {
 
 	[SerializeField] private Image image;
+	[SerializeField] private float maxScale = 1;
+	float scale;
 
 	void Start () 
 	{
-		image.fillAmount = 0;
+		scale = 0;
 		StartCoroutine(Appear());
 	}
 
 	private IEnumerator Appear()
 	{
-		while(!Mathf.Approximately(image.fillAmount,1)){
-			image.fillAmount = Mathf.Lerp(image.fillAmount,1,0.1f);
+		var r_t = image.GetComponent<RectTransform>();
+		var initial_scale = new Vector3(0,0,0);
+		var target_scale = new Vector3(1,1,1)*maxScale;
+
+		r_t.localScale = initial_scale;
+		while(!Mathf.Approximately(r_t.localScale.x,1)){
+			r_t.localScale = Vector3.Lerp(r_t.localScale,target_scale,0.1f);
 			yield return new WaitForEndOfFrame();
 		}
 		yield return new WaitForSeconds(1);
-		while(!Mathf.Approximately(image.fillAmount,0)){
-			image.fillAmount = Mathf.Lerp(image.fillAmount,0,0.1f);
+		while(!Mathf.Approximately(r_t.localScale.x,0)){
+			r_t.localScale = Vector3.Lerp(r_t.localScale,initial_scale,0.1f);
 			yield return new WaitForEndOfFrame();
 		}
 		Destroy(this.gameObject);

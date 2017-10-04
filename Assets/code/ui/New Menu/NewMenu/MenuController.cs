@@ -14,8 +14,13 @@ public class MenuController : MonoBehaviour {
 	[SerializeField]
 	private List<GameObject> _allScreens;
 
+	[SerializeField] Text levelText;
+
 	private int _currentIndex = -1;
 
+	private void Start(){
+		levelText.text = "Level "+ PlayerPrefs.GetInt("level");
+	}
 	public void ChangeScreen(int index){
 		if(_currentIndex > 0){
 			BackToMenu();
@@ -56,7 +61,7 @@ public class MenuController : MonoBehaviour {
 		StartCoroutine( NewSceneAnimation(name) );
 	}
 	private IEnumerator NewSceneAnimation(string name){
-		yield return new WaitForEndOfFrame();
+		yield return Transite();
 		SceneManager.LoadScene(name);
 	}
 	private IEnumerator OpenScreenAnimation(){

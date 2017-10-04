@@ -16,6 +16,7 @@ public class LevelManager : MonoBehaviour {
 	[SerializeField] List<GameObject> gemList;
 	[SerializeField] GameObject spikeObstacle;
 	[SerializeField] GameObject pintorDeVentoObstacle;
+	[SerializeField] private GameObject boomPrefab;
 
 	[Header("Tiles")]
 	[SerializeField] List<GameObject> generalTileList;
@@ -197,6 +198,7 @@ public class LevelManager : MonoBehaviour {
 	}
 	private void SpawnBoss(){
 		int random_number = Random.Range(0,bossPrefab.Count);
+		DestroyAllTiles();
 		print(random_number);
 		Instantiate( bossPrefab[random_number],
 					 Vector3.zero,
@@ -209,6 +211,24 @@ public class LevelManager : MonoBehaviour {
 		yield return new WaitForEndOfFrame();
 	}
 	private void DestroyAllTiles(){
-		//read the function name
+		var blocks = FindObjectsOfType<Block>();
+
+		for(int i = blocks.Length - 1; i >= 0; i--){
+			var b = Instantiate(boomPrefab,blocks[i].transform.position,Quaternion.identity);
+			Destroy(b,0.5f);
+			Destroy(blocks[i].gameObject);
+		}
+		var obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
+		for(int i = obstacles.Length - 1; i >= 0; i--){
+			var b = Instantiate(boomPrefab,obstacles[i].transform.position,Quaternion.identity);
+			Destroy(b,0.5f);
+			Destroy(obstacles[i].gameObject);
+		}
+		var tiles = GameObject.FindGameObjectsWithTag("Tiles");
+		for(int i = tiles.Length - 1; i >= 0; i--){
+			var b = Instantiate(boomPrefab,tiles[i].transform.position,Quaternion.identity);
+			Destroy(b,0.5f);
+			Destroy(tiles[i].gameObject);
+		}
 	}
 }
