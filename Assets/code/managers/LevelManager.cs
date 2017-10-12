@@ -30,7 +30,6 @@ public class LevelManager : MonoBehaviour {
 	[Header("UI")]
 	[SerializeField] private GameObject textGameOver;
 	[SerializeField] private GameObject expScreenPanel;
-	[SerializeField] private Slider moneySlider;
 	[SerializeField] private Text moneyText;
 	[SerializeField] private Image transitor;
 
@@ -45,7 +44,7 @@ public class LevelManager : MonoBehaviour {
 	private float distanceFromLastTile;
 	private float cameraSize;
 	private bool canStart;
-	private bool canIncreseCameraVelocity;
+	private bool canIncreaseCameraVelocity;
 
 	private void Start(){
 		//GETTERS
@@ -57,7 +56,7 @@ public class LevelManager : MonoBehaviour {
 		GetMoneyText();
 
 		//SETTERS
-		canIncreseCameraVelocity = false;
+		canIncreaseCameraVelocity = true;
 
 		//DESABILITA COISAS DESNECESSARIAS NO MOMENTO
 		DisableGameOverText();
@@ -73,7 +72,6 @@ public class LevelManager : MonoBehaviour {
 			bossDefeated =  false;
 			while(totalMoney < moneyRequirementStep){
 				MoveCamera();
-				UpdateSlider();
 				SpawnRandomTile();
 				IncreaseCameraVelocity();
 				yield return new WaitForEndOfFrame();
@@ -95,14 +93,12 @@ public class LevelManager : MonoBehaviour {
 		while(!bossDefeated){
 			yield return new WaitForEndOfFrame();
 		}
+		DestroyAllSeeds();
 		print("FIM DO BOSS");
 	}
-	private void UpdateSlider(){
-		moneySlider.value = int.Parse(moneyText.text)/(float)moneyRequirementStep;
-	}
 	private void IncreaseCameraVelocity(){
-		if(canIncreseCameraVelocity && cameraVelocity < cameraMaxVelocity){
-			cameraVelocity += 0.001f;
+		if(canIncreaseCameraVelocity && cameraVelocity < cameraMaxVelocity){
+			cameraVelocity += 0.0005f;
 		}
 	}
 	private void IncreaseMoneyRequirementStep(){
@@ -182,7 +178,7 @@ public class LevelManager : MonoBehaviour {
 	public IEnumerator GameOver(){
 		GameObject.Find("ItemCatcher").SetActive(false);
 		cameraVelocity = 0;
-		canIncreseCameraVelocity = false;
+		canIncreaseCameraVelocity = false;
 		player.GetComponent<SpriteRenderer>().enabled = false;
 		textGameOver.SetActive(true);
 		yield return new WaitForSeconds(2);
@@ -205,12 +201,7 @@ public class LevelManager : MonoBehaviour {
 		Instantiate( bossPrefab[random_number],
 					 Vector3.zero,
 					 Quaternion.identity,
-					 cameraInScene.transform).transform.localPosition = Vector3.zero;
-	}
-	public IEnumerator FinishLevel(){
-		//Termina o level
-		//Eh chamada quando se mata chefao ou gameover
-		yield return new WaitForEndOfFrame();
+					 cameraInScene.transform).transform.localPosition = Vector3.zero + Vector3.forward;
 	}
 	private void DestroyAllTiles(){
 		var blocks = FindObjectsOfType<Block>();
@@ -231,6 +222,14 @@ public class LevelManager : MonoBehaviour {
 			var b = Instantiate(boomPrefab,tiles[i].transform.position,Quaternion.identity);
 			Destroy(b,0.5f);
 			Destroy(tiles[i].gameObject);
+		}
+	}
+	private void DestroyAllSeeds(){
+		var seeds = FindObjectsOfType<Seed>();
+		for(int i = seeds.Length - 1; i>= 0; i--){
+			var b = Instantiate(boomPrefab,seeds[i].transform.position,Quaternion.identity);
+			Destroy(b,0.5f);
+			Destroy(seeds[i].gameObject);
 		}
 	}
 }

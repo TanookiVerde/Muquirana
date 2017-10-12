@@ -36,20 +36,25 @@ public class Tico : Boss {
 		isActing = false;
 	}
 	private IEnumerator Loop(){
+		bool canShootSingle = true;
 		while(!defeated){
 			CanDie();
 			if(!PlayerInFront() && !isActing){
 				yield return GoToPosition( GetPlayerHeight() );
 			}else if(!isActing){
-				int rand = Random.Range(0,4);
-				if(rand > 2){
+				int rand = Random.Range(0,10);
+				if(canShootSingle && rand > 6){
 					yield return SingleShoot();
-				}else if (rand > 1){
+					canShootSingle = false;
+				}else if (canShootSingle && rand > 4){
 					yield return TripleShoot();
-				}else if (rand > 0){
+					canShootSingle = false;
+				}else if (rand > 2){
 					yield return ColumnShootUp();
+					canShootSingle = true;
 				}else{
-					yield return ColumnShootDown();//nunca eh acessado
+					yield return ColumnShootDown();
+					canShootSingle = true;
 				}
 			}
 		}
@@ -63,6 +68,7 @@ public class Tico : Boss {
 			transform.localScale = Vector3.Lerp(transform.localScale,target,tax);
 			yield return new WaitForEndOfFrame();
 		}
+
 		if(Random.Range(0,10)>1 || !badSeed){
 			Instantiate(seedPrefab,transform.position,Quaternion.identity);
 		}else{

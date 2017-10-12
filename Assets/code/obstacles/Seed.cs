@@ -11,7 +11,7 @@ public class Seed : Hook {
 	[SerializeField] private float velocity;
 
 	private float time = 0;
-	[SerializeField] private float maxTime = 1f;
+	[SerializeField] private float maxTime = 0.1f;
 
 	private void Start(){
 		time = 0;
