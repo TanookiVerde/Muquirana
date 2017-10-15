@@ -16,6 +16,7 @@ public class LevelManager : MonoBehaviour {
 	[SerializeField] List<GameObject> gemList;
 	[SerializeField] GameObject spikeObstacle;
 	[SerializeField] GameObject pintorDeVentoObstacle;
+	[SerializeField] GameObject heartItem;
 	[SerializeField] private GameObject boomPrefab;
 
 	[Header("Tiles")]
@@ -160,6 +161,8 @@ public class LevelManager : MonoBehaviour {
 		int randN = Random.Range(0,10);
 		if(randN > 10 - gemPerTen){
 			return gemList[ Random.Range(0,gemList.Count) ];
+		}else if (Random.Range(0,10) > 7){
+			return heartItem;
 		}
 		return null;
 	}
