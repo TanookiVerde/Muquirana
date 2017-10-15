@@ -24,8 +24,10 @@ public class ExpScreen : MonoBehaviour {
 	private int indexInList;
 
 	private void Start(){
+		PlayerPrefs.SetInt("level",0);
+		PlayerPrefs.SetInt("exp",0);
 		GetCollectedItems();
-		StartCoroutine(BeginScreen());
+		StartCoroutine( BeginScreen() );
 	}
 	private void GetCollectedItems(){
 		colItems = GameObject.Find("LevelManager").GetComponent<LevelManager>().collectedItems;
@@ -78,10 +80,13 @@ public class ExpScreen : MonoBehaviour {
 		indexInList = 0;
 		while(true){
 			GameObject actualItem = ReadNextItem();
-			if(actualItem == null) break;
-			NewColItemInGrid(actualItem);
-			yield return AddOnExp(actualItem.GetComponent<Gem>().GetValue());
-			yield return new WaitForSeconds(0.25f);
+			if(actualItem == null) {
+				break;
+			}else if(actualItem.GetComponent<Gem>() != null){
+				yield return AddOnExp(actualItem.GetComponent<Gem>().GetValue());
+			}else{
+				yield return AddOnExp(0);
+			}
 		}
 		PlayerPrefs.SetInt("exp",exp);
 		PlayerPrefs.SetInt("level", level);

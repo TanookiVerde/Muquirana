@@ -32,7 +32,7 @@ public class ItemCatcher : MonoBehaviour {
 			StartCoroutine ( lManager.UpdateMoneyText() );
 			return;
 		}
-		
+
 		GameObject.Find("Player").GetComponent<PlayerStatus>().AddLife();
 	}
 }
