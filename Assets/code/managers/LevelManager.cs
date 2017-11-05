@@ -179,6 +179,7 @@ public class LevelManager : MonoBehaviour {
 		moneyText = GameObject.Find("Money_Text").GetComponent<Text>();
 	}
 	public IEnumerator GameOver(){
+		//desativar UI ingame e so deixar expPanel
 		GameObject.Find("ItemCatcher").SetActive(false);
 		cameraVelocity = 0;
 		canIncreaseCameraVelocity = false;

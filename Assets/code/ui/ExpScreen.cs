@@ -16,16 +16,22 @@ public class ExpScreen : MonoBehaviour {
 	[SerializeField]private Slider myExpSlider;
 	[SerializeField]private GameObject myGrid;
 	[SerializeField]private GameObject colItemPrefab;
+	[SerializeField]private Text score;
+
+	[SerializeField]private GameObject bPlayAgain;
+	[SerializeField]private GameObject bMenu;
+
+	[SerializeField]private GameObject highScoreText;
 
 	[Header("Saving Values")]
 	[SerializeField] private int level;
 	[SerializeField] private List<int> expToLevel;
 
+	int biggestScore = 0;
+
 	private int indexInList;
 
 	private void Start(){
-		PlayerPrefs.SetInt("level",0);
-		PlayerPrefs.SetInt("exp",0);
 		GetCollectedItems();
 		StartCoroutine( BeginScreen() );
 	}
@@ -46,22 +52,6 @@ public class ExpScreen : MonoBehaviour {
 	private string GetName(GameObject item){
 		return item.name;
 	}
-	private void NewColItemInGrid(GameObject item){
-		string itemName = item.name;
-		for(int i = 0; i < myGrid.transform.childCount;i++){
-			if(myGrid.transform.GetChild(i).name == itemName){
-				myGrid.transform.GetChild(i).GetChild(2).GetChild(0).GetComponent<Text>().text = (int.Parse(myGrid.transform.GetChild(i).GetChild(2).GetChild(0).GetComponent<Text>().text) + 1 ).ToString();
-				return;
-			}
-		}
-		GameObject temp = Instantiate(colItemPrefab,Vector3.zero,Quaternion.identity,myGrid.transform);
-		temp.transform.GetChild(0).GetComponent<Image>().sprite = item.GetComponent<SpriteRenderer>().sprite;
-		temp.transform.GetChild(1).GetComponent<Text>().text = itemName;
-		temp.transform.GetChild(2).GetChild(0).GetComponent<Text>().text = 1.ToString();
-
-		temp.name = itemName;
-		return;
-	}
 	private IEnumerator AddOnExp(int value){
 		while(value > 0){
 			value--;
@@ -75,6 +65,17 @@ public class ExpScreen : MonoBehaviour {
 		}
 	}
 	private IEnumerator BeginScreen(){
+		score.gameObject.SetActive(true);
+		var currentScore = GameObject.Find("LevelManager").GetComponent<LevelManager>().totalMoney;
+		score.text = currentScore.ToString();
+
+		if(currentScore > PlayerPrefs.GetInt("bestScore",0) ){
+			highScoreText.SetActive(true);
+			PlayerPrefs.SetInt("bestScore",currentScore);
+		}else{
+			highScoreText.SetActive(false);
+		}
+
 		exp = PlayerPrefs.GetInt("exp",0);
 		level = PlayerPrefs.GetInt("level",1);
 		indexInList = 0;
@@ -88,6 +89,9 @@ public class ExpScreen : MonoBehaviour {
 				yield return AddOnExp(0);
 			}
 		}
+		bMenu.SetActive(true);
+		bPlayAgain.SetActive(true);
+
 		PlayerPrefs.SetInt("exp",exp);
 		PlayerPrefs.SetInt("level", level);
 	}
