@@ -180,6 +180,7 @@ public class LevelManager : MonoBehaviour {
 	}
 	public IEnumerator GameOver(){
 		//desativar UI ingame e so deixar expPanel
+		print(GameObject.Find("ItemCatcher"));
 		GameObject.Find("ItemCatcher").SetActive(false);
 		cameraVelocity = 0;
 		canIncreaseCameraVelocity = false;

@@ -10,10 +10,8 @@ public class TreasureList : MonoBehaviour {
 
 	private void Start(){
 		int total = _itemList.Count;
-		print(total);
 		for(int i = 0;i<total;i++){
 			_itemList[i].GetComponent<Selectable>().interactable = _playerData.collectedItems[i];
-			print("i: "+i+"item: "+_playerData.collectedItems[i]);
 		}
 	}
 }

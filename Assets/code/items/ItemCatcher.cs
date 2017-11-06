@@ -9,6 +9,13 @@ public class ItemCatcher : MonoBehaviour {
 	private void Start(){
 		lManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
 	}
+	private void Update(){
+		if(Input.GetKeyDown(KeyCode.Space)){
+			PlayerPrefs.SetInt("level", 1);
+			PlayerPrefs.SetInt("exp", 0);
+			print("ZERADO");
+		}
+	}
 	private void OnTriggerEnter2D(Collider2D other){
 		if(other.CompareTag("Gem")){
 			NewGem(other.gameObject);
@@ -27,7 +34,7 @@ public class ItemCatcher : MonoBehaviour {
 		lManager.collectedItems.Add(gem.gameObject);
 		
 		if(!heart){
-			playerData.collectedItems[gem.GetComponent<Gem>().gemData.itemType.GetHashCode()] = true;
+			//playerData.collectedItems[gem.GetComponent<Gem>().gemData.itemType.GetHashCode()] = true;
 			lManager.totalMoney += item.GetValue();
 			StartCoroutine ( lManager.UpdateMoneyText() );
 			return;

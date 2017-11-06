@@ -5,7 +5,6 @@ using UnityEngine;
 public class HeartItem : MonoBehaviour, IItem {
 
 	public void Effect(){
-		print("HHHHHHHHHHHHHHHHHHHHHHHHHH");
 		return;
 	}
 	public IEnumerator CatchAnimation(){

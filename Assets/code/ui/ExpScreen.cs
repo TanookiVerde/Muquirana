@@ -24,6 +24,7 @@ public class ExpScreen : MonoBehaviour {
 	[SerializeField]private GameObject highScoreText;
 
 	[Header("Saving Values")]
+	[SerializeField] private SO_PlayerData playerData;
 	[SerializeField] private int level;
 	[SerializeField] private List<int> expToLevel;
 
@@ -54,11 +55,15 @@ public class ExpScreen : MonoBehaviour {
 	}
 	private IEnumerator AddOnExp(int value){
 		while(value > 0){
-			value--;
-			exp++;
+			value -= 2;
+			exp += 2;
 			if(exp > expToLevel[level+1]){
+				playerData.collectedItems[level-1] = true;
 				level++;
+				print("LEVEL UP: "+level);
 				exp = 0;
+				//MUDA ITEMS E LEVEL
+				playerData.level = level;
 			}
 			myExpSlider.value = (float)exp/expToLevel[level+1];
 			yield return new WaitForEndOfFrame();
@@ -78,6 +83,7 @@ public class ExpScreen : MonoBehaviour {
 
 		exp = PlayerPrefs.GetInt("exp",0);
 		level = PlayerPrefs.GetInt("level",1);
+
 		indexInList = 0;
 		while(true){
 			GameObject actualItem = ReadNextItem();

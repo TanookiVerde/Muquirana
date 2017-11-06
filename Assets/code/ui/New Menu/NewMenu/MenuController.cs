@@ -16,9 +16,20 @@ public class MenuController : MonoBehaviour {
 
 	[SerializeField] Text levelText;
 
+	[SerializeField] private SO_PlayerData playerData;
+
 	private int _currentIndex = -1;
 
 	private void Start(){
+		levelText.text = "Level "+ PlayerPrefs.GetInt("level");
+	}
+	public void Reset(){
+		playerData.level = 1;
+		for(int i = 0; i < playerData.collectedItems.Length;i++){
+			playerData.collectedItems[i] = false;
+		}
+		PlayerPrefs.SetInt("exp",0);
+		PlayerPrefs.SetInt("level",1);
 		levelText.text = "Level "+ PlayerPrefs.GetInt("level");
 	}
 	public void ChangeScreen(int index){
