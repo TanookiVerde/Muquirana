@@ -202,7 +202,7 @@ public class LevelManager : MonoBehaviour {
 	private void SpawnBoss(){
 		int random_number = Random.Range(0,bossPrefab.Count);
 		DestroyAllTiles();
-		print(random_number);
+		//print(random_number);
 		Instantiate( bossPrefab[random_number],
 					 Vector3.zero,
 					 Quaternion.identity,

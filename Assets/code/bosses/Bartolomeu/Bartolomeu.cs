@@ -82,6 +82,7 @@ public class Bartolomeu : Boss {
 	{
 		while(!defeated)
 		{
+			CanDie();
 			if(!isActing)
 			{
 				yield return PlaceEggs ();

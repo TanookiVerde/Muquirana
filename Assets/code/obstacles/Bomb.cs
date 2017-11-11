@@ -29,12 +29,14 @@ public class Bomb : MonoBehaviour
 			player.GetComponent<PlayerStatus>().LoseLife();
 			StartCoroutine (player.GetComponent<Muquirana>().DamageAnimation());
 		}
+		Destroy (gameObject, 3.0f);
 	}
 
 	void OnTriggerEnter2D (Collider2D other)
 	{
-		if (other.gameObject.CompareTag ("Player")) 
+		if (other.gameObject.layer == LayerMask.NameToLayer ("Player")) 
 		{
+			print ("Player in range");
 			GetComponent<Animator> ().SetTrigger ("PlayerInRange");
 		}
 	}

@@ -18,6 +18,7 @@ public class Muquirana : MonoBehaviour {
 
 	[Header("DamageAnimation")]
 	[SerializeField] private float rotationAngle;
+	[SerializeField] private float rotationSpeed;
 	[SerializeField] private Color inDamageColor;
 	[SerializeField] private int frameDuration;
 
@@ -76,13 +77,23 @@ public class Muquirana : MonoBehaviour {
 	public IEnumerator DamageAnimation(){
 		mySR.color = inDamageColor;
 		GetComponentInChildren<BoxCollider2D>().enabled = false;
-		for(int i = 0; i < frameDuration; i++){
+		/*for(int i = 0; i < frameDuration; i++){
 			transform.Rotate(0,0,Time.deltaTime*rotationAngle);
 			yield return new WaitForEndOfFrame();
+		}*/
+		for(float angle = 0; angle < rotationAngle; angle+=Time.deltaTime*rotationSpeed)
+		{
+			transform.Rotate(0,0,Time.deltaTime*rotationSpeed);
+			yield return new WaitForEndOfFrame();
 		}
-		yield return new WaitForSeconds(0.5f);
-		for(int i = 0; i < frameDuration; i++){
+		yield return new WaitForSeconds(0.2f);
+		/*for(int i = 0; i < frameDuration; i++){
 			transform.Rotate(0,0,-Time.deltaTime*rotationAngle);
+			yield return new WaitForEndOfFrame();
+		}*/
+		for(float angle = rotationAngle; transform.rotation.z > 0; angle-=Time.deltaTime*rotationSpeed)
+		{
+			transform.Rotate(0,0,-Time.deltaTime*rotationSpeed);
 			yield return new WaitForEndOfFrame();
 		}
 		mySR.color = Color.white;

@@ -145,18 +145,21 @@ public class Tico : Boss {
 			other.GetComponent<Seed>().EndLife();
 		}
 	}
-	private void CanDie(){
+
+	//Lucas: Movi para a classe Boss
+	/*private void CanDie(){
 		if(actualHP <= 0){
 			StopAllCoroutines();
 			StartCoroutine( Die() );
 		}
-	}
-	private IEnumerator Die(){
+	}*/
+
+	/*private IEnumerator Die(){
 		gameObject.AddComponent(typeof(Rigidbody2D));
 		GetComponent<Rigidbody2D>().AddForce(Vector2.down*50f);
 		transform.up *= -1;
 		yield return new WaitForSeconds(1f);
 		GameObject.Find("LevelManager").GetComponent<LevelManager>().bossDefeated = true;
 		Destroy(this.transform.parent.gameObject);
-	}
+	}*/
 }

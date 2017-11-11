@@ -69,6 +69,23 @@ public class Boss : MonoBehaviour {
 		}
 		isActing = false;
 	}
+
+	public void CanDie(){
+		if(actualHP <= 0){
+			StopAllCoroutines();
+			StartCoroutine( Die() );
+		}
+	}
+
+	public IEnumerator Die(){
+		gameObject.AddComponent(typeof(Rigidbody2D));
+		GetComponent<Rigidbody2D>().AddForce(Vector2.down*50f);
+		transform.up *= -1;
+		yield return new WaitForSeconds(1f);
+		GameObject.Find("LevelManager").GetComponent<LevelManager>().bossDefeated = true;
+		Destroy(this.transform.parent.gameObject);
+	}
+
 	private float MyLerp(float a, float b, float tax, float error = 0.05f){
 		if(tax > 1) tax = 1;
 		float temp = a + (b-a)*tax;
