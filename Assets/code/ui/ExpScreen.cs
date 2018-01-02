@@ -17,6 +17,7 @@ public class ExpScreen : MonoBehaviour {
 	[SerializeField]private GameObject myGrid;
 	[SerializeField]private GameObject colItemPrefab;
 	[SerializeField]private Text score;
+	[SerializeField]private Text newItemInGallery;
 
 	[SerializeField]private GameObject bPlayAgain;
 	[SerializeField]private GameObject bMenu;
@@ -33,6 +34,7 @@ public class ExpScreen : MonoBehaviour {
 	private int indexInList;
 
 	private void Start(){
+		newItemInGallery.gameObject.SetActive(false);
 		GetCollectedItems();
 		StartCoroutine( BeginScreen() );
 	}
@@ -61,6 +63,7 @@ public class ExpScreen : MonoBehaviour {
 				playerData.collectedItems[level-1] = true;
 				level++;
 				print("LEVEL UP: "+level);
+				newItemInGallery.gameObject.SetActive(true);
 				exp = 0;
 				//MUDA ITEMS E LEVEL
 				playerData.level = level;
