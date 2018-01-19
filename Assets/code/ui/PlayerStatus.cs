@@ -20,10 +20,13 @@ public class PlayerStatus : MonoBehaviour {
 		}
 	}
 	public void LoseLife(){
+		AudioManager a = GameObject.Find("MusicHandler").GetComponent<AudioManager>();
 		if(grid.transform.childCount > 0){
  			GameObject.Destroy(grid.transform.GetChild(0).gameObject);
+			 a.PlaySound(Sounds.DAMAGE);
 			StartCoroutine( isDead() );
  		}
+		
 	}
 	private void InitHeartsNumber(){
 		for(int i = 0; i < initialHeartsNumber; i++){

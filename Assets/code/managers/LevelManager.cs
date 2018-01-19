@@ -90,11 +90,14 @@ public class LevelManager : MonoBehaviour {
 		}
 	}
 	private IEnumerator BossBattle(){
+		AudioManager a = GameObject.Find("MusicHandler").GetComponent<AudioManager>();
+		a.ChangePitch();
 		SpawnBoss();
 		while(!bossDefeated){
 			yield return new WaitForEndOfFrame();
 		}
 		DestroyAllSeeds();
+		a.ResetPitch();
 		print("FIM DO BOSS");
 	}
 	private void IncreaseCameraVelocity(){

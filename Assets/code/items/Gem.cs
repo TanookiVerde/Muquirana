@@ -12,6 +12,8 @@ public class Gem : MonoBehaviour, IItem {
 		yield return new WaitForEndOfFrame();
 	}
 	public void Destroy(){
+		AudioManager a = GameObject.Find("MusicHandler").GetComponent<AudioManager>();
+		a.PlaySound(Sounds.LEAF_GEM);
 		//GameObject.Destroy(this.gameObject);
 		transform.position = Vector3.zero;
 		transform.parent = null;
